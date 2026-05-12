@@ -1,0 +1,11 @@
+const express=require('express');
+const router=express.Router();
+const hospitalController=require('../controller/hospitalController');
+const auth=require('../middelware/auth');
+router.post('/add',hospitalController.addHospital);
+router.get('/get',auth,hospitalController.getHospital);
+router.put('/approve/:id',auth,hospitalController.approveHospital);
+router.put('/reject/:id',auth,hospitalController.rejectHospital);
+router.put('/update/:id',auth,hospitalController.updateHospital);
+router.delete('/delete/:id',auth,hospitalController.deleteHospital);
+module.exports = router;
