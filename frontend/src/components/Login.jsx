@@ -33,7 +33,12 @@ const Login = () => {
       if (response.ok) {
         alert('Login successful')
         localStorage.setItem('token', data.token)
-        navigate('/home')
+        localStorage.setItem('user', JSON.stringify(data.user))
+        if (data.user?.role === 'hospital') {
+          navigate('/hospitaldashboard')
+        } else {
+          navigate('/home')
+        }
       } else {
         alert(data.message)
       }

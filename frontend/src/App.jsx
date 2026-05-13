@@ -10,6 +10,11 @@ import Forget from './components/Forget'
 import AddHospital from './components/AddHospital'
 import Showhospital from './components/Showhospital'
 import Signup from './components/Signup'
+import HospitalDash from './hospitalDashboard/HospitalDash'
+import Department from './hospitalDashboard/Department'
+import DepartmentProfile from './hospitalDashboard/DepartmentProfile'
+import SubDepartment from './hospitalDashboard/SubDepartment'
+import Doctor from './hospitalDashboard/Doctor'
 
 const App = () => {
   return (
@@ -26,6 +31,11 @@ const App = () => {
         <Route path="/addhospital" element={<AddHospital />} />
         <Route path="/AddHospital" element={<AddHospital />} />
         <Route path="/showhospitals" element={<Showhospital />} />
+        <Route path="/hospitaldashboard" element={<HospitalDash />} />
+        <Route path="/departments" element={<Department />} />
+        <Route path="/subdepartments" element={<SubDepartment />} />
+        <Route path="/doctors" element={<Doctor />} />
+        <Route path="/departmentprofile" element={<DepartmentProfile />} />
       </Routes>
     </BrowserRouter>
   )

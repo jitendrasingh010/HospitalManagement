@@ -4,6 +4,7 @@ const secretKey = 'secretKey@123';
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const transporter = require('../nodemailer/nodemailer');
+const { uploadImage } = require('../cloudnary/cloudnary');
 exports.signUp = async (req, res) => {
     try {
         const { name, email, password, phone, age, gender, BG , role} = req.body;
@@ -56,15 +57,21 @@ exports.getProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
     try {
-        const { name, email, phone, age, gender, BG } = req.body;
+        const { name, email, phone, age, gender, BG, image } = req.body;
 
         if (!name || !email || !phone || !age || !gender || !BG) {
             return res.status(400).json({ message: 'All fields are required' });
         }
 
+        let imageUrl = image;
+
+        if (image) {
+            imageUrl = await uploadImage(image);
+        }
+
         const user = await User.findByIdAndUpdate(
             req.user._id,
-            { name, email, phone, age, gender, BG },
+            { name, email, phone, age, gender, BG, image: imageUrl },
             { new: true }
         ).select('-password');
 
@@ -77,6 +84,33 @@ exports.updateProfile = async (req, res) => {
         console.error('Error updating profile:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
+}
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({ message: 'Old password and new password are required' });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Old password is wrong' });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.status(200).json({ message: 'Password changed successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 }
 
 const generateOTP = () => {
@@ -101,7 +135,7 @@ exports.forgetPassword = async (req, res) => {
 
     await user.save();
     console.log("user", user);
-
+  
     await transporter.sendMail({
       from: user.email,
       to: email,
@@ -179,5 +213,3 @@ exports.resetPassword = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
-

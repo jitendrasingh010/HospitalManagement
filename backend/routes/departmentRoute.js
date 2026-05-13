@@ -1,0 +1,11 @@
+const express=require('express');
+const router=express.Router();
+const departmentController=require('../controller/depratmentContoller');
+const auth=require('../middelware/auth');
+router.post('/add',auth,departmentController.addDepartment);
+router.get('/get',auth,departmentController.getDepartment);
+router.put('/update/:id',auth,departmentController.updateDepartment);
+router.delete('/delete/:id',auth,departmentController.deleteDepartment);
+router.put('/softdelete/:id',auth,departmentController.softDeleteDepartment);
+router.put('/restore/:id',auth,departmentController.restoreDepartment);
+module.exports = router;

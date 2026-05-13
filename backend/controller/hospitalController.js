@@ -56,8 +56,18 @@ exports.addHospital = async (req, res) => {
 
 exports.getHospital = async (req, res) => {
     try {
-        const hospitals = await Hospital.find().sort({ createdAt: -1 });
+        const hospitals = await Hospital.find()
+            .populate({
+                path: 'address',
+                populate: [
+                    { path: 'district' },
+                    { path: 'state' }
+                ]
+            })
+            .sort({ createdAt: -1 });
         res.status(200).json({ message: "Hospital data", hospitals });
+        console.log("hospital data:", hospitals);
+        
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
 
 const API_URL = 'http://localhost:5000/hospitalmanagement'
+const CITY_API_URL = 'http://localhost:5000/city/getcity'
 
 const emptyForm = {
   name: '',
@@ -28,6 +29,24 @@ const AddHospital = () => {
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState(emptyForm)
+  const [cities, setCities] = useState([])
+
+  useEffect(() => {
+    const getCities = async () => {
+      try {
+        const response = await fetch(CITY_API_URL)
+        const data = await response.json()
+        setCities(data.cities || [])
+      } catch (error) {
+        setMessage('City data could not be loaded')
+        console.error(error)
+      }
+    }
+
+    getCities()
+  }, [])
+
+  const selectedCity = cities.find((item) => item._id === form.address)
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target
@@ -87,7 +106,7 @@ const AddHospital = () => {
         <div className="header-actions">
           <button className="secondary-btn" onClick={() => navigate('/showhospitals')}>Show Hospitals</button>
           <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>
-          <button className="secondary-btn" onClick={() => navigate('/home')}>Dashboard</button>
+          <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>
           <button className="theme-btn" onClick={toggleTheme} title="Change theme">
             {theme === 'light' ? '☾' : '☀'}
           </button>
@@ -99,6 +118,14 @@ const AddHospital = () => {
         <input name="email" type="email" placeholder="Hospital email *" value={form.email} onChange={handleChange} />
         <input name="speciality" placeholder="Speciality *" value={form.speciality} onChange={handleChange} />
         <input name="contact" type="number" placeholder="Contact number *" value={form.contact} onChange={handleChange} />
+        <select name="address" value={form.address} onChange={handleChange}>
+          <option value="">Select city *</option>
+          {cities.map((item) => (
+            <option key={item._id} value={item._id}>{item.city}</option>
+          ))}
+        </select>
+        <input value={selectedCity?.district?.district || ''} placeholder="District" readOnly />
+        <input value={selectedCity?.state?.state || ''} placeholder="State" readOnly />
         <input name="pincode" placeholder="Pincode *" value={form.pincode} onChange={handleChange} />
         <input name="numberOfDoctors" type="number" min="0" placeholder="Number of doctors" value={form.numberOfDoctors} onChange={handleChange} />
         <input name="numberOfBeds" type="number" min="0" placeholder="Number of beds" value={form.numberOfBeds} onChange={handleChange} />
@@ -116,7 +143,6 @@ const AddHospital = () => {
           Ambulance service
         </label>
 
-        <textarea name="address" placeholder="Address *" value={form.address} onChange={handleChange} />
         <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} />
 
         <div className="form-actions hospital-actions">

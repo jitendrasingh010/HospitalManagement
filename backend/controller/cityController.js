@@ -25,6 +25,7 @@ exports.getCity = async (req, res) => {
     try {
         const cities = await Citydata.find().populate('district').populate('state');
         res.status(200).json({ cities });
+        console.log('City data:', cities);
     } catch (error) {
         console.error('Error fetching cities:', error);
         res.status(500).json({ message: 'Internal server error' });

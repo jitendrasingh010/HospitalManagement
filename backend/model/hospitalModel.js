@@ -1,32 +1,33 @@
-const mongoose=require('mongoose');
-const hospitalSchema=new mongoose.Schema({
-    name:{
+const mongoose = require('mongoose');
+const hospitalSchema = new mongoose.Schema({
+    name: {
         type: String,
         required: true
     },
-    email:{
+    email: {
         type: String,
         required: true,
         unique: true
     },
-    address:{
+    address: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'City',
+        required: true
+    },
+    pincode: {
         type: String,
         required: true
     },
-    pincode:{
-        type: String,
-        required: true
-    },
-    speciality:{
+    speciality: {
         type: String,
         required: true
     },
 
-    contact:{
+    contact: {
         type: String,
         required: true
     },
-      emergencyAvailable: {
+    emergencyAvailable: {
         type: Boolean,
         default: false
     },
@@ -59,7 +60,7 @@ const hospitalSchema=new mongoose.Schema({
         type: Boolean,
         default: false
     },
-   
+
     establishedYear: {
         type: Number
     },
@@ -72,11 +73,12 @@ const hospitalSchema=new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    status:{
-        type:String,
-        enum:["pending","approved","rejected"],
-        default:"pending"
+    status: {
+        type: String,
+        enum: ["pending", "approved", "rejected"],
+        default: "pending"
     }
+
 });
-const hospitalModel=mongoose.model('Hospital',hospitalSchema);
-module.exports=hospitalModel;
+const hospitalModel = mongoose.model('Hospital', hospitalSchema);
+module.exports = hospitalModel;

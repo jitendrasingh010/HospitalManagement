@@ -49,19 +49,43 @@ const Showhospital = () => {
   }, [getHospitals])
 
   const searchValue = search.toLowerCase().trim()
+
+  const getAddressText = (address) => {
+    if (!address) {
+      return ''
+    }
+
+    if (typeof address === 'string') {
+      return address
+    }
+
+    const city = address.city || ''
+    const district = address.district?.district || ''
+    const state = address.state?.state || ''
+    return [city, district, state].filter(Boolean).join(', ')
+  }
+
   const filteredHospitals = hospitals.filter((item) => {
     if (!searchValue) {
       return true
     }
 
+    const addressText = getAddressText(item.address).toLowerCase()
+
     return (
       item.name?.toLowerCase().includes(searchValue) ||
       item.email?.toLowerCase().includes(searchValue) ||
       item.speciality?.toLowerCase().includes(searchValue) ||
-      item.address?.toLowerCase().includes(searchValue) ||
+      addressText.includes(searchValue) ||
       item.contact?.toLowerCase().includes(searchValue)
     )
   })
+
+  const statusCounts = hospitals.reduce((counts, item) => {
+    const status = item.status || 'pending'
+    counts[status] = (counts[status] || 0) + 1
+    return counts
+  }, { pending: 0, approved: 0, rejected: 0 })
 
   const handleApprove = async (id) => {
     try {
@@ -126,7 +150,7 @@ const Showhospital = () => {
         </div>
         <div className="header-actions">
           <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>
-          <button className="secondary-btn" onClick={() => navigate('/home')}>Dashboard</button>
+          <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>
           <button className="theme-btn" onClick={toggleTheme} title="Change theme">
             {theme === 'light' ? '☾' : '☀'}
           </button>
@@ -143,6 +167,21 @@ const Showhospital = () => {
         <button className="secondary-btn" onClick={() => getHospitals(true)}>Refresh</button>
       </div>
 
+      <div className="hospital-status-summary">
+        <div className="hospital-status-box pending-box">
+          <span>Pending</span>
+          <strong>{statusCounts.pending}</strong>
+        </div>
+        <div className="hospital-status-box approved-box">
+          <span>Approved</span>
+          <strong>{statusCounts.approved}</strong>
+        </div>
+        <div className="hospital-status-box rejected-box">
+          <span>Rejected</span>
+          <strong>{statusCounts.rejected}</strong>
+        </div>
+      </div>
+
       {message && <p className="message">{message}</p>}
 
       <div className="hospital-grid">
@@ -155,12 +194,15 @@ const Showhospital = () => {
               </div>
             </div>
 
-            <p className="muted">{item.address}</p>
+            <p className="muted">{getAddressText(item.address)}</p>
 
             <div className="hospital-info-grid">
               <span><b>Speciality</b>{item.speciality}</span>
               <span><b>Email</b>{item.email}</span>
               <span><b>Contact</b>{item.contact}</span>
+              <span><b>City</b>{item.address?.city || '-'}</span>
+              <span><b>District</b>{item.address?.district?.district || '-'}</span>
+              <span><b>State</b>{item.address?.state?.state || '-'}</span>
               <span><b>Pincode</b>{item.pincode}</span>
               <span><b>Doctors</b>{item.numberOfDoctors || 0}</span>
               <span><b>Beds</b>{item.numberOfBeds || 0}</span>
