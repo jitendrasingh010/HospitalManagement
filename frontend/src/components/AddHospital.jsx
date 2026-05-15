@@ -19,6 +19,7 @@ const emptyForm = {
   rating: '',
   establishedYear: '',
   description: '',
+  images: [''],
   emergencyAvailable: false,
   ambulanceService: false,
 }
@@ -53,6 +54,40 @@ const AddHospital = () => {
     setForm({ ...form, [name]: type === 'checkbox' ? checked : value })
   }
 
+  const handleImageChange = (event, index) => {
+    const file = event.target.files?.[0]
+
+    if (!file) {
+      return
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setMessage('Please select a valid image file')
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      const newImages = [...form.images]
+      newImages[index] = reader.result
+      setForm({ ...form, images: newImages })
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const addImageInput = () => {
+    setForm({ ...form, images: [...form.images, ''] })
+  }
+
+  const removeImageInput = (index) => {
+    if (form.images.length === 1) {
+      setForm({ ...form, images: [''] })
+      return
+    }
+
+    setForm({ ...form, images: form.images.filter((_, imageIndex) => imageIndex !== index) })
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault()
     setMessage('')
@@ -70,6 +105,7 @@ const AddHospital = () => {
         },
         body: JSON.stringify({
           ...form,
+          images: form.images.filter(Boolean),
           numberOfDoctors: Number(form.numberOfDoctors || 0),
           numberOfBeds: Number(form.numberOfBeds || 0),
           rating: form.rating ? Number(form.rating) : undefined,
@@ -104,8 +140,6 @@ const AddHospital = () => {
           <p className="muted">Create a hospital record with contact and facility details.</p>
         </div>
         <div className="header-actions">
-          <button className="secondary-btn" onClick={() => navigate('/showhospitals')}>Show Hospitals</button>
-          <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>
           <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>
           <button className="theme-btn" onClick={toggleTheme} title="Change theme">
             {theme === 'light' ? '☾' : '☀'}
@@ -145,9 +179,23 @@ const AddHospital = () => {
 
         <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} />
 
+        <div className="hospital-image-box">
+          <div className="hospital-image-head">
+            <span>Hospital images</span>
+            <button type="button" className="add-symbol-btn" onClick={addImageInput} title="Add image">+</button>
+          </div>
+
+          {form.images.map((image, index) => (
+            <div className="hospital-image-row" key={index}>
+              <input type="file" accept="image/*" onChange={(event) => handleImageChange(event, index)} />
+              <button type="button" className="icon-btn delete-icon" onClick={() => removeImageInput(index)} title="Remove image">-</button>
+              {image && <img src={image} alt={`Hospital ${index + 1}`} />}
+            </div>
+          ))}
+        </div>
+
         <div className="form-actions hospital-actions">
           <button type="submit" disabled={loading}>{loading ? 'Saving...' : 'Add Hospital'}</button>
-          <button type="button" className="secondary-btn" onClick={() => navigate('/showhospitals')}>Show Hospitals</button>
           <button type="button" className="secondary-btn" onClick={() => navigate(-1)}>Cancel</button>
         </div>
       </form>

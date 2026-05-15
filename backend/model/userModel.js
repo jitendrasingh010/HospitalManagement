@@ -35,12 +35,16 @@ const userSchema=new mongoose.Schema({
     },
     role:{
         type:String,
-        enum:['superadmin','hospital'],
+        enum:['superadmin','hospital','doctor'],
         default:'hospital'
     },
     hospitalId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Hospital',
+    },
+    doctorId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Doctor',
     },
     otp:{
         type:String,

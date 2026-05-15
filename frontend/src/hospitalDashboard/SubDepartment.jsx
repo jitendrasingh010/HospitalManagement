@@ -16,6 +16,9 @@ const SubDepartment = () => {
   const [message, setMessage] = useState('')
   const [showPopup, setShowPopup] = useState(false)
   const [statusFilter, setStatusFilter] = useState('active')
+  const [search, setSearch] = useState('')
+  const [sortBy, setSortBy] = useState('newest')
+  const [loading, setLoading] = useState(true)
 
   const getToken = () => localStorage.getItem('token')
 
@@ -39,6 +42,7 @@ const SubDepartment = () => {
 
   const getSubDepartments = async () => {
     try {
+      setLoading(true)
       const response = await fetch(`${API_URL}/get`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       })
@@ -53,6 +57,8 @@ const SubDepartment = () => {
     } catch (error) {
       setMessage('Sub departments could not be loaded')
       console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -188,8 +194,33 @@ const SubDepartment = () => {
     }
   }
 
-  const filteredSubDepartments = subDepartments.filter((item) => item.status === statusFilter)
-  const activeDepartments = departments.filter((item) => item.status === 'active')
+  const searchValue = search.toLowerCase().trim()
+
+  const filteredSubDepartments = subDepartments
+    .filter((item) => {
+      if ((item.status || 'active') !== statusFilter) {
+        return false
+      }
+
+      if (!searchValue) {
+        return true
+      }
+
+      return (
+        item.name?.toLowerCase().includes(searchValue) ||
+        item.departmentId?.name?.toLowerCase().includes(searchValue)
+      )
+    })
+    .sort((a, b) => {
+      if (sortBy === 'name') {
+        return (a.name || '').localeCompare(b.name || '')
+      }
+      if (sortBy === 'department') {
+        return (a.departmentId?.name || '').localeCompare(b.departmentId?.name || '')
+      }
+      return (b.createdAt || b._id || '').localeCompare(a.createdAt || a._id || '')
+    })
+  const activeDepartments = departments.filter((item) => (item.status || 'active') === 'active')
 
   return (
     <main className="page-shell">
@@ -221,6 +252,20 @@ const SubDepartment = () => {
 
       {message && <p className="message">{message}</p>}
 
+      <div className="hospital-toolbar">
+        <input
+          type="text"
+          placeholder="Search sub department or department"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+        <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+          <option value="newest">Newest first</option>
+          <option value="name">Name A-Z</option>
+          <option value="department">Department A-Z</option>
+        </select>
+      </div>
+
       {showPopup && (
         <div className="popup-bg">
           <div className="popup-box">
@@ -249,7 +294,8 @@ const SubDepartment = () => {
         </div>
       )}
 
-      <div className="table-wrap">
+      {!loading && (
+        <div className="table-wrap">
         <table>
           <thead>
             <tr>
@@ -267,13 +313,13 @@ const SubDepartment = () => {
                 <td>{item.name}</td>
                 <td>{item.departmentId?.name || '-'}</td>
                 <td>
-                  <span className={item.status === 'active' ? 'status-active' : 'status-inactive'}>
-                    {item.status}
+                  <span className={(item.status || 'active') === 'active' ? 'status-active' : 'status-inactive'}>
+                    {item.status || 'active'}
                   </span>
                 </td>
                 <td className="department-actions">
                   <button className="icon-btn edit-icon" onClick={() => editSubDepartment(item)} title="Edit">✎</button>
-                  {item.status === 'active' ? (
+                  {(item.status || 'active') === 'active' ? (
                     <button className="link-btn" onClick={() => inactiveSubDepartment(item._id)}>Inactive</button>
                   ) : (
                     <button className="link-btn" onClick={() => restoreSubDepartment(item._id)}>Active</button>
@@ -284,9 +330,17 @@ const SubDepartment = () => {
             ))}
           </tbody>
         </table>
-      </div>
+        </div>
+      )}
 
-      {filteredSubDepartments.length === 0 && (
+      {loading && (
+        <div className="empty-state">
+          <h2>Loading sub departments...</h2>
+          <p className="muted">Please wait while records are loading.</p>
+        </div>
+      )}
+
+      {!loading && filteredSubDepartments.length === 0 && (
         <div className="empty-state">
           <h2>No sub departments found</h2>
           <p className="muted">No {statusFilter} sub department found.</p>

@@ -1,9 +1,16 @@
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const { randomUUID } = require('crypto');
 const Doctor = require('../model/doctorModel');
+const User = require('../model/userModel');
 const Department = require('../model/departmentModel');
 const SubDepartment = require('../model/subdepartmentModel');
 const { uploadImage } = require('../cloudnary/cloudnary');
+const transporter = require('../nodemailer/nodemailer');
 
 exports.addDoctor = async (req, res) => {
+    const session = await mongoose.startSession();
+
     try {
         const {
             name,
@@ -11,6 +18,7 @@ exports.addDoctor = async (req, res) => {
             phone,
             gender,
             age,
+            BG,
             specialization,
             experience,
             qualification,
@@ -27,14 +35,30 @@ exports.addDoctor = async (req, res) => {
             return res.status(400).json({ message: 'Name, email, phone, specialization, department and sub department are required' });
         }
 
-        const department = await Department.findOne({ _id: departmentId, hospital: req.user.hospitalId });
+        session.startTransaction();
+
+        const department = await Department.findOne({ _id: departmentId, hospital: req.user.hospitalId }).session(session);
         if (!department) {
+            await session.abortTransaction();
             return res.status(404).json({ message: 'Department not found' });
         }
 
-        const subDepartment = await SubDepartment.findOne({ _id: subDepartmentId, departmentId });
+        const subDepartment = await SubDepartment.findOne({ _id: subDepartmentId, departmentId }).session(session);
         if (!subDepartment) {
+            await session.abortTransaction();
             return res.status(404).json({ message: 'Sub department not found' });
+        }
+
+        const existingDoctor = await Doctor.findOne({ email }).session(session);
+        if (existingDoctor) {
+            await session.abortTransaction();
+            return res.status(409).json({ message: 'Doctor already exists with this email' });
+        }
+
+        const existingUser = await User.findOne({ email }).session(session);
+        if (existingUser) {
+            await session.abortTransaction();
+            return res.status(409).json({ message: 'User already exists with this email' });
         }
 
         const doctor = new Doctor({
@@ -58,17 +82,48 @@ exports.addDoctor = async (req, res) => {
             about
         });
 
-        await doctor.save();
+        await doctor.save({ session });
+
+        const uuidPassword = randomUUID().slice(0, 8);
+        const hashedPassword = await bcrypt.hash(uuidPassword, 10);
+        const user = new User({
+            name,
+            email,
+            password: hashedPassword,
+            phone: Number(phone),
+            age: age || 18,
+            gender: gender || 'Other',
+            BG: BG || 'O+',
+            role: 'doctor',
+            hospitalId: req.user.hospitalId,
+            doctorId: doctor._id
+        });
+
+        await user.save({ session });
+
+        await transporter.sendMail({
+            from: "jitendrasingh63793@gmail.com",
+            to: email,
+            subject: "Doctor account created",
+            text: `Hello Dr. ${name}, your doctor account is created.\n\nEmail: ${email}\nPassword: ${uuidPassword}\n\nYou can login with this email and password.`
+        });
+
+        await session.commitTransaction();
+
         res.status(201).json({ message: 'Doctor added successfully', doctor });
     } catch (error) {
+        if (session.inTransaction()) {
+            await session.abortTransaction();
+        }
         res.status(500).json({ message: error.message });
+    } finally {
+        session.endSession();
     }
 };
 
 exports.getDoctors = async (req, res) => {
     try {
         const doctors = await Doctor.find({ hospital: req.user.hospitalId })
-            .populate('departmentId')
             .populate({
                 path: 'subDepartmentId',
                 populate: { path: 'departmentId' }

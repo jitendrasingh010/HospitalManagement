@@ -1,7 +1,12 @@
 const Hospital = require('../model/hospitalModel');
+const HospitalImg = require('../model/hospitalimg');
 const User = require('../model/userModel');
+const Doctor = require('../model/doctorModel');
+const Department = require('../model/departmentModel');
+const SubDepartment = require('../model/subdepartmentModel');
 const bcrypt = require('bcrypt');
 const { randomUUID } = require('crypto');
+const { uploadImage } = require('../cloudnary/cloudnary');
 const transporter = require('../nodemailer/nodemailer');
 
 exports.addHospital = async (req, res) => {
@@ -22,6 +27,7 @@ exports.addHospital = async (req, res) => {
             ambulanceService,
             establishedYear,
             description,
+            images,
             status
         } = req.body || {};
 
@@ -48,6 +54,26 @@ exports.addHospital = async (req, res) => {
             status
         });
 
+        if (images) {
+            const imageList = Array.isArray(images) ? images : [images];
+            const hospitalImages = [];
+
+            for (const image of imageList) {
+                if (image) {
+                    const imageUrl = await uploadImage(image);
+                    hospitalImages.push(imageUrl);
+                }
+            }
+
+            if (hospitalImages.length > 0) {
+                await HospitalImg.create({
+                    hospital: hospital._id,
+                    name: hospital.name,
+                    img: hospitalImages
+                });
+            }
+        }
+
         res.status(201).json({ message: "Hospital added successfully", hospital });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -64,10 +90,127 @@ exports.getHospital = async (req, res) => {
                     { path: 'state' }
                 ]
             })
-            .sort({ createdAt: -1 });
-        res.status(200).json({ message: "Hospital data", hospitals });
-        console.log("hospital data:", hospitals);
+            .sort({ createdAt: -1 })
+            .lean();
+
+        const hospitalData = [];
+
+        for (const hospital of hospitals) {
+            const hospitalImages = await HospitalImg.findOne({ hospital: hospital._id });
+            hospitalData.push({
+                ...hospital,
+                images: hospitalImages ? hospitalImages.img : []
+            });
+        }
+
+        res.status(200).json({ message: "Hospital data", hospitals: hospitalData });
+        console.log("hospital data:", hospitalData);
         
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.getPublicHospitals = async (req, res) => {
+    try {
+        const hospitals = await Hospital.find({ status: "approved" })
+            .populate({
+                path: 'address',
+                populate: [
+                    { path: 'district' },
+                    { path: 'state' }
+                ]
+            })
+            .sort({ createdAt: -1 })
+            .lean();
+
+        const hospitalData = [];
+
+        for (const hospital of hospitals) {
+            const hospitalImages = await HospitalImg.findOne({ hospital: hospital._id });
+            const departments = await Department.find({ hospital: hospital._id, status: "active" });
+            const departmentIds = departments.map((department) => department._id);
+            const subDepartments = await SubDepartment.find({
+                departmentId: { $in: departmentIds },
+                status: "active"
+            }).populate('departmentId');
+
+            hospitalData.push({
+                ...hospital,
+                images: hospitalImages ? hospitalImages.img : [],
+                departments,
+                subDepartments
+            });
+        }
+
+        res.status(200).json({ message: "Approved hospitals", hospitals: hospitalData });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.getPublicDoctors = async (req, res) => {
+    try {
+        const doctors = await Doctor.find({ status: "active" })
+            .populate('hospital')
+            .populate({
+                path: 'subDepartmentId',
+                populate: { path: 'departmentId' }
+            })
+            .sort({ createdAt: -1 });
+
+        const approvedDoctors = doctors.filter((doctor) => doctor.hospital?.status === "approved");
+
+        res.status(200).json({ message: "Approved doctors", doctors: approvedDoctors });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.getPublicHospitalDetails = async (req, res) => {
+    try {
+        const hospitalId = req.params.id;
+
+        const hospital = await Hospital.findOne({ _id: hospitalId, status: "approved" })
+            .populate({
+                path: 'address',
+                populate: [
+                    { path: 'district' },
+                    { path: 'state' }
+                ]
+            })
+            .lean();
+
+        if (!hospital) {
+            return res.status(404).json({ message: "Hospital not found" });
+        }
+
+        const hospitalImages = await HospitalImg.findOne({ hospital: hospital._id });
+        const departments = await Department.find({ hospital: hospitalId, status: "active" }).select('_id');
+        const departmentIds = departments.map((department) => department._id);
+
+        const subDepartments = await SubDepartment.find({
+            departmentId: { $in: departmentIds },
+            status: "active"
+        }).populate('departmentId');
+
+        const doctors = await Doctor.find({
+            hospital: hospitalId,
+            status: "active"
+        }).populate({
+            path: 'subDepartmentId',
+            populate: { path: 'departmentId' }
+        });
+
+        res.status(200).json({
+            message: "Hospital details",
+            hospital: {
+                ...hospital,
+                images: hospitalImages ? hospitalImages.img : []
+            },
+            doctors,
+            subDepartments
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -170,6 +313,8 @@ exports.deleteHospital = async (req, res) => {
         if (!hospital) {
             return res.status(404).json({ message: "Hospital not found" });
         }
+
+        await HospitalImg.deleteMany({ hospital: req.params.id });
 
         res.status(200).json({ message: "Hospital deleted successfully" });
     } catch (error) {

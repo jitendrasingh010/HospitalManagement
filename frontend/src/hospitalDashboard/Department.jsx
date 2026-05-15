@@ -14,11 +14,15 @@ const Department = () => {
   const [message, setMessage] = useState('')
   const [showPopup, setShowPopup] = useState(false)
   const [statusFilter, setStatusFilter] = useState('active')
+  const [search, setSearch] = useState('')
+  const [sortBy, setSortBy] = useState('newest')
+  const [loading, setLoading] = useState(true)
 
   const getToken = () => localStorage.getItem('token')
 
   const getDepartments = async () => {
     try {
+      setLoading(true)
       const response = await fetch(`${API_URL}/get`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       })
@@ -33,6 +37,8 @@ const Department = () => {
     } catch (error) {
       setMessage('Departments could not be loaded')
       console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -168,7 +174,29 @@ const Department = () => {
     }
   }
 
-  const filteredDepartments = departments.filter((item) => item.status === statusFilter)
+  const searchValue = search.toLowerCase().trim()
+
+  const filteredDepartments = departments
+    .filter((item) => {
+      if ((item.status || 'active') !== statusFilter) {
+        return false
+      }
+
+      if (!searchValue) {
+        return true
+      }
+
+      return (
+        item.name?.toLowerCase().includes(searchValue) ||
+        item.description?.toLowerCase().includes(searchValue)
+      )
+    })
+    .sort((a, b) => {
+      if (sortBy === 'name') {
+        return (a.name || '').localeCompare(b.name || '')
+      }
+      return (b.createdAt || b._id || '').localeCompare(a.createdAt || a._id || '')
+    })
 
   return (
     <main className="page-shell">
@@ -201,6 +229,19 @@ const Department = () => {
 
       {message && <p className="message">{message}</p>}
 
+      <div className="hospital-toolbar">
+        <input
+          type="text"
+          placeholder="Search department or description"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+        <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+          <option value="newest">Newest first</option>
+          <option value="name">Name A-Z</option>
+        </select>
+      </div>
+
       {showPopup && (
         <div className="popup-bg">
           <div className="popup-box">
@@ -228,7 +269,8 @@ const Department = () => {
         </div>
       )}
 
-      <div className="table-wrap">
+      {!loading && (
+        <div className="table-wrap">
         <table>
           <thead>
             <tr>
@@ -246,13 +288,13 @@ const Department = () => {
                 <td>{item.name}</td>
                 <td className="department-desc-cell">{item.description}</td>
                 <td>
-                  <span className={item.status === 'active' ? 'status-active' : 'status-inactive'}>
-                    {item.status}
+                  <span className={(item.status || 'active') === 'active' ? 'status-active' : 'status-inactive'}>
+                    {item.status || 'active'}
                   </span>
                 </td>
                 <td className="department-actions">
                   <button className="icon-btn edit-icon" onClick={() => editDepartment(item)} title="Edit">✎</button>
-                  {item.status === 'active' ? (
+                  {(item.status || 'active') === 'active' ? (
                     <button className="link-btn" onClick={() => inactiveDepartment(item._id)}>Inactive</button>
                   ) : (
                     <button className="link-btn" onClick={() => restoreDepartment(item._id)}>Active</button>
@@ -263,9 +305,17 @@ const Department = () => {
             ))}
           </tbody>
         </table>
-      </div>
+        </div>
+      )}
 
-      {filteredDepartments.length === 0 && (
+      {loading && (
+        <div className="empty-state">
+          <h2>Loading departments...</h2>
+          <p className="muted">Please wait while records are loading.</p>
+        </div>
+      )}
+
+      {!loading && filteredDepartments.length === 0 && (
         <div className="empty-state">
           <h2>No departments found</h2>
           <p className="muted">No {statusFilter} department found.</p>

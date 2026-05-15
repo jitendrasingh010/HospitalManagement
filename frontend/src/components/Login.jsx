@@ -34,8 +34,11 @@ const Login = () => {
         alert('Login successful')
         localStorage.setItem('token', data.token)
         localStorage.setItem('user', JSON.stringify(data.user))
+
         if (data.user?.role === 'hospital') {
           navigate('/hospitaldashboard')
+        } else if (data.user?.role === 'doctor') {
+          navigate('/departmentprofile')
         } else {
           navigate('/home')
         }
@@ -86,9 +89,6 @@ const Login = () => {
         </button>
         <button className="forgot-btn" onClick={() => navigate('/signup')} type="button">
           New user? Signup
-        </button>
-        <button className="secondary-btn" onClick={() => navigate('/addhospital')} type="button" style={{marginTop: '10px', width: '100%'}}>
-          Add Hospital
         </button>
         {message && <p className="message">{message}</p>}
 

@@ -42,6 +42,9 @@ app.use('/subdepartment', subDepartmentController);
 const doctorController = require('./routes/doctorRoute');
 app.use('/doctor', doctorController);
 
+const appointmentController = require('./routes/appointmentRoute');
+app.use('/appointment', appointmentController);
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

@@ -36,6 +36,9 @@ const Doctor = () => {
   const [message, setMessage] = useState('')
   const [showPopup, setShowPopup] = useState(false)
   const [statusFilter, setStatusFilter] = useState('active')
+  const [search, setSearch] = useState('')
+  const [sortBy, setSortBy] = useState('newest')
+  const [loading, setLoading] = useState(true)
 
   const getToken = () => localStorage.getItem('token')
 
@@ -77,6 +80,7 @@ const Doctor = () => {
 
   const getDoctors = async () => {
     try {
+      setLoading(true)
       const response = await fetch(`${API_URL}/get`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       })
@@ -91,6 +95,8 @@ const Doctor = () => {
     } catch (error) {
       setMessage('Doctors could not be loaded')
       console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -280,11 +286,43 @@ const Doctor = () => {
     }
   }
 
-  const filteredDoctors = doctors.filter((item) => item.status === statusFilter)
-  const activeDepartments = departments.filter((item) => item.status === 'active')
+  const searchValue = search.toLowerCase().trim()
+
+  const filteredDoctors = doctors
+    .filter((item) => {
+      if ((item.status || 'active') !== statusFilter) {
+        return false
+      }
+
+      if (!searchValue) {
+        return true
+      }
+
+      return (
+        item.name?.toLowerCase().includes(searchValue) ||
+        item.email?.toLowerCase().includes(searchValue) ||
+        item.phone?.toLowerCase().includes(searchValue) ||
+        item.specialization?.toLowerCase().includes(searchValue) ||
+        item.subDepartmentId?.name?.toLowerCase().includes(searchValue) ||
+        item.subDepartmentId?.departmentId?.name?.toLowerCase().includes(searchValue)
+      )
+    })
+    .sort((a, b) => {
+      if (sortBy === 'name') {
+        return (a.name || '').localeCompare(b.name || '')
+      }
+      if (sortBy === 'fees') {
+        return Number(b.fees || 0) - Number(a.fees || 0)
+      }
+      if (sortBy === 'experience') {
+        return Number(b.experience || 0) - Number(a.experience || 0)
+      }
+      return (b.createdAt || b._id || '').localeCompare(a.createdAt || a._id || '')
+    })
+  const activeDepartments = departments.filter((item) => (item.status || 'active') === 'active')
   const activeSubDepartments = subDepartments.filter((item) => {
     const itemDepartmentId = item.departmentId?._id || item.departmentId
-    return item.status === 'active' && itemDepartmentId === form.departmentId
+    return (item.status || 'active') === 'active' && itemDepartmentId === form.departmentId
   })
 
   return (
@@ -306,6 +344,21 @@ const Doctor = () => {
       </div>
 
       {message && <p className="message">{message}</p>}
+
+      <div className="hospital-toolbar">
+        <input
+          type="text"
+          placeholder="Search doctor, email, phone or department"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+        <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+          <option value="newest">Newest first</option>
+          <option value="name">Name A-Z</option>
+          <option value="fees">Fees high</option>
+          <option value="experience">Experience high</option>
+        </select>
+      </div>
 
       {showPopup && (
         <div className="popup-bg">
@@ -366,7 +419,8 @@ const Doctor = () => {
         </div>
       )}
 
-      <div className="table-wrap">
+      {!loading && (
+        <div className="table-wrap">
         <table>
           <thead>
             <tr>
@@ -400,13 +454,13 @@ const Doctor = () => {
                 <td>{item.subDepartmentId?.name || '-'}</td>
                 <td>{item.fees || '-'}</td>
                 <td>
-                  <span className={item.status === 'active' ? 'status-active' : 'status-inactive'}>
-                    {item.status}
+                  <span className={(item.status || 'active') === 'active' ? 'status-active' : 'status-inactive'}>
+                    {item.status || 'active'}
                   </span>
                 </td>
                 <td className="department-actions">
                   <button className="icon-btn edit-icon" onClick={() => editDoctor(item)} title="Edit">✎</button>
-                  {item.status === 'active' ? (
+                  {(item.status || 'active') === 'active' ? (
                     <button className="link-btn" onClick={() => inactiveDoctor(item._id)}>Inactive</button>
                   ) : (
                     <button className="link-btn" onClick={() => restoreDoctor(item._id)}>Active</button>
@@ -417,9 +471,17 @@ const Doctor = () => {
             ))}
           </tbody>
         </table>
-      </div>
+        </div>
+      )}
 
-      {filteredDoctors.length === 0 && (
+      {loading && (
+        <div className="empty-state">
+          <h2>Loading doctors...</h2>
+          <p className="muted">Please wait while records are loading.</p>
+        </div>
+      )}
+
+      {!loading && filteredDoctors.length === 0 && (
         <div className="empty-state">
           <h2>No doctors found</h2>
           <p className="muted">No {statusFilter} doctor found.</p>

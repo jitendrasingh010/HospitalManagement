@@ -15,27 +15,32 @@ import Department from './hospitalDashboard/Department'
 import DepartmentProfile from './hospitalDashboard/DepartmentProfile'
 import SubDepartment from './hospitalDashboard/SubDepartment'
 import Doctor from './hospitalDashboard/Doctor'
+import Protected from './protectedRoute/protectedRoute'
+import DetailHome from './components/DetailHome.jsx'
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<DetailHome />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/forget" element={<Forget />} />
-        <Route path="/state" element={<State />} />
-        <Route path="/district" element={<District />} />
-        <Route path="/city" element={<City />} />
         <Route path="/addhospital" element={<AddHospital />} />
         <Route path="/AddHospital" element={<AddHospital />} />
-        <Route path="/showhospitals" element={<Showhospital />} />
-        <Route path="/hospitaldashboard" element={<HospitalDash />} />
-        <Route path="/departments" element={<Department />} />
-        <Route path="/subdepartments" element={<SubDepartment />} />
-        <Route path="/doctors" element={<Doctor />} />
-        <Route path="/departmentprofile" element={<DepartmentProfile />} />
+
+        <Route path="/home" element={<Protected allowedRoles={['superadmin']}><Home /></Protected>} />
+        <Route path="/profile" element={<Protected><Profile /></Protected>} />
+        <Route path="/state" element={<Protected allowedRoles={['superadmin']}><State /></Protected>} />
+        <Route path="/district" element={<Protected allowedRoles={['superadmin']}><District /></Protected>} />
+        <Route path="/city" element={<Protected allowedRoles={['superadmin']}><City /></Protected>} />
+        <Route path="/showhospitals" element={<Protected allowedRoles={['superadmin']}><Showhospital /></Protected>} />
+
+        <Route path="/hospitaldashboard" element={<Protected allowedRoles={['hospital']}><HospitalDash /></Protected>} />
+        <Route path="/departments" element={<Protected allowedRoles={['hospital']}><Department /></Protected>} />
+        <Route path="/subdepartments" element={<Protected allowedRoles={['hospital']}><SubDepartment /></Protected>} />
+        <Route path="/doctors" element={<Protected allowedRoles={['hospital']}><Doctor /></Protected>} />
+        <Route path="/departmentprofile" element={<Protected allowedRoles={['hospital']}><DepartmentProfile /></Protected>} />
       </Routes>
     </BrowserRouter>
   )

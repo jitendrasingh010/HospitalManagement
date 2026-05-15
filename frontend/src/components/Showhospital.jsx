@@ -9,6 +9,8 @@ const Showhospital = () => {
   const { theme, toggleTheme } = useTheme()
   const [hospitals, setHospitals] = useState([])
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [sortBy, setSortBy] = useState('newest')
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(true)
 
@@ -65,21 +67,40 @@ const Showhospital = () => {
     return [city, district, state].filter(Boolean).join(', ')
   }
 
-  const filteredHospitals = hospitals.filter((item) => {
-    if (!searchValue) {
-      return true
-    }
+  const filteredHospitals = hospitals
+    .filter((item) => {
+      const status = item.status || 'pending'
 
-    const addressText = getAddressText(item.address).toLowerCase()
+      if (statusFilter !== 'all' && status !== statusFilter) {
+        return false
+      }
 
-    return (
-      item.name?.toLowerCase().includes(searchValue) ||
-      item.email?.toLowerCase().includes(searchValue) ||
-      item.speciality?.toLowerCase().includes(searchValue) ||
-      addressText.includes(searchValue) ||
-      item.contact?.toLowerCase().includes(searchValue)
-    )
-  })
+      if (!searchValue) {
+        return true
+      }
+
+      const addressText = getAddressText(item.address).toLowerCase()
+
+      return (
+        item.name?.toLowerCase().includes(searchValue) ||
+        item.email?.toLowerCase().includes(searchValue) ||
+        item.speciality?.toLowerCase().includes(searchValue) ||
+        addressText.includes(searchValue) ||
+        item.contact?.toLowerCase().includes(searchValue)
+      )
+    })
+    .sort((a, b) => {
+      if (sortBy === 'name') {
+        return (a.name || '').localeCompare(b.name || '')
+      }
+      if (sortBy === 'rating') {
+        return Number(b.rating || 0) - Number(a.rating || 0)
+      }
+      if (sortBy === 'beds') {
+        return Number(b.numberOfBeds || 0) - Number(a.numberOfBeds || 0)
+      }
+      return (b.createdAt || b._id || '').localeCompare(a.createdAt || a._id || '')
+    })
 
   const statusCounts = hospitals.reduce((counts, item) => {
     const status = item.status || 'pending'
@@ -150,7 +171,6 @@ const Showhospital = () => {
         </div>
         <div className="header-actions">
           <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>
-          <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>
           <button className="theme-btn" onClick={toggleTheme} title="Change theme">
             {theme === 'light' ? '☾' : '☀'}
           </button>
@@ -164,29 +184,48 @@ const Showhospital = () => {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
+        <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+          <option value="newest">Newest first</option>
+          <option value="name">Name A-Z</option>
+          <option value="rating">Rating high</option>
+          <option value="beds">Beds high</option>
+        </select>
         <button className="secondary-btn" onClick={() => getHospitals(true)}>Refresh</button>
       </div>
 
       <div className="hospital-status-summary">
-        <div className="hospital-status-box pending-box">
+        <button className={statusFilter === 'all' ? 'hospital-status-box active-filter' : 'hospital-status-box'} onClick={() => setStatusFilter('all')}>
+          <span>All</span>
+          <strong>{hospitals.length}</strong>
+        </button>
+        <button className={statusFilter === 'pending' ? 'hospital-status-box pending-box active-filter' : 'hospital-status-box pending-box'} onClick={() => setStatusFilter('pending')}>
           <span>Pending</span>
           <strong>{statusCounts.pending}</strong>
-        </div>
-        <div className="hospital-status-box approved-box">
+        </button>
+        <button className={statusFilter === 'approved' ? 'hospital-status-box approved-box active-filter' : 'hospital-status-box approved-box'} onClick={() => setStatusFilter('approved')}>
           <span>Approved</span>
           <strong>{statusCounts.approved}</strong>
-        </div>
-        <div className="hospital-status-box rejected-box">
+        </button>
+        <button className={statusFilter === 'rejected' ? 'hospital-status-box rejected-box active-filter' : 'hospital-status-box rejected-box'} onClick={() => setStatusFilter('rejected')}>
           <span>Rejected</span>
           <strong>{statusCounts.rejected}</strong>
-        </div>
+        </button>
       </div>
 
       {message && <p className="message">{message}</p>}
 
-      <div className="hospital-grid">
+      {!loading && (
+        <div className="hospital-grid">
         {filteredHospitals.map((item) => (
           <article className="hospital-card" key={item._id}>
+            {item.images?.length > 0 && (
+              <div className="hospital-card-images">
+                {item.images.map((image, index) => (
+                  <img key={`${item._id}-${index}`} src={image} alt={`${item.name} ${index + 1}`} />
+                ))}
+              </div>
+            )}
+
             <div className="hospital-card-top">
               <div>
                 <span className="status-pill">{item.status || 'pending'}</span>
@@ -230,7 +269,15 @@ const Showhospital = () => {
             {item.description && <p className="hospital-desc">{item.description}</p>}
           </article>
         ))}
-      </div>
+        </div>
+      )}
+
+      {loading && (
+        <div className="empty-state">
+          <h2>Loading hospitals...</h2>
+          <p className="muted">Please wait while records are loading.</p>
+        </div>
+      )}
 
       {!loading && filteredHospitals.length === 0 && (
         <div className="empty-state">
