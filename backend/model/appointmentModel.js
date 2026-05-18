@@ -19,6 +19,10 @@ const appointmentSchema = new mongoose.Schema({
         ref: 'Doctor',
         required: true
     },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Appointment', appointmentSchema);

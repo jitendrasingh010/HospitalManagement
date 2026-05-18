@@ -10,6 +10,8 @@ import Forget from './components/Forget'
 import AddHospital from './components/AddHospital'
 import Showhospital from './components/Showhospital'
 import Signup from './components/Signup'
+import User from './components/User'
+import Appointment from './components/Appointment'
 import HospitalDash from './hospitalDashboard/HospitalDash'
 import Department from './hospitalDashboard/Department'
 import DepartmentProfile from './hospitalDashboard/DepartmentProfile'
@@ -28,14 +30,14 @@ const App = () => {
         <Route path="/forget" element={<Forget />} />
         <Route path="/addhospital" element={<AddHospital />} />
         <Route path="/AddHospital" element={<AddHospital />} />
-
         <Route path="/home" element={<Protected allowedRoles={['superadmin']}><Home /></Protected>} />
         <Route path="/profile" element={<Protected><Profile /></Protected>} />
         <Route path="/state" element={<Protected allowedRoles={['superadmin']}><State /></Protected>} />
         <Route path="/district" element={<Protected allowedRoles={['superadmin']}><District /></Protected>} />
         <Route path="/city" element={<Protected allowedRoles={['superadmin']}><City /></Protected>} />
         <Route path="/showhospitals" element={<Protected allowedRoles={['superadmin']}><Showhospital /></Protected>} />
-
+        <Route path="/userdashboard" element={<Protected allowedRoles={['user']}><User /></Protected>} />
+        <Route path="/appointment" element={<Protected allowedRoles={['user']}><Appointment /></Protected>} />
         <Route path="/hospitaldashboard" element={<Protected allowedRoles={['hospital']}><HospitalDash /></Protected>} />
         <Route path="/departments" element={<Protected allowedRoles={['hospital']}><Department /></Protected>} />
         <Route path="/subdepartments" element={<Protected allowedRoles={['hospital']}><SubDepartment /></Protected>} />

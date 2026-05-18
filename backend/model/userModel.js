@@ -35,8 +35,8 @@ const userSchema=new mongoose.Schema({
     },
     role:{
         type:String,
-        enum:['superadmin','hospital','doctor'],
-        default:'hospital'
+        enum:['superadmin','hospital','user'],
+        default:'user'
     },
     hospitalId:{
         type: mongoose.Schema.Types.ObjectId,
@@ -54,7 +54,6 @@ const userSchema=new mongoose.Schema({
         type:Date,
         default:null
     }
-
 });
 const userModel=mongoose.model('User',userSchema);
 module.exports=userModel;

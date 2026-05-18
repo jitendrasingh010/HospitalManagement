@@ -104,6 +104,12 @@ const DetailHome = () => {
   }
 
   const openAppointment = () => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      alert('Please login to book an appointment')
+      navigate('/login')
+      return
+    }
     setShowAppointment(true)
     setAppointmentMessage('')
   }
@@ -119,7 +125,10 @@ const DetailHome = () => {
     try {
       const response = await fetch(`${APPOINTMENT_URL}/addappointment`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
         body: JSON.stringify({
           date: appointmentDate,
           time: appointmentTime,
@@ -207,7 +216,7 @@ const DetailHome = () => {
   return (
     <main className="public-page">
       <header className="public-header">
-        <button className="public-logo" onClick={() => navigate('/')}>
+        <button className="public-logo" onClick={() => navigate('/login')}>
           <span>H</span>
           <b>MediCare</b>
         </button>
@@ -237,7 +246,7 @@ const DetailHome = () => {
           </p>
           <div className="public-hero-actions">
             <a className="primary-link" href="#hospitals">View Hospitals</a>
-            <button className="ghost-btn" onClick={() => navigate('/addhospital')}>Add Hospital</button>
+            <button className="ghost-btn" onClick={() => navigate('/addhospital')}>Register Hospital</button>
           </div>
         </div>
 
@@ -340,7 +349,7 @@ const DetailHome = () => {
                   <span>{hospital.ambulanceService ? 'Ambulance' : 'OPD'}</span>
                 </div>
 
-                <button className="view-btn" onClick={() => openHospital(hospital)}>
+                <button className="view-btn hospital-view-btn" onClick={() => openHospital(hospital)}>
                   View Hospital
                 </button>
               </div>

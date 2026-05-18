@@ -1349,17 +1349,22 @@ th {
 .ghost-btn,
 .view-btn,
 .close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 44px;
   padding: 0 16px;
+  border: 1px solid transparent;
   border-radius: 6px;
   font-weight: 800;
+  line-height: 1.2;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .public-login-btn,
 .primary-link,
 .view-btn {
-  border: 0;
   background: var(--primary);
   color: #ffffff;
   box-shadow: 0 12px 24px var(--shadow);
@@ -1582,13 +1587,22 @@ th {
 .view-btn {
   width: 100%;
   margin-top: 16px;
-  display: grid;
-  place-items: center;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 15px;
-  line-height: 1;
   letter-spacing: 0;
   text-align: center;
+}
+
+.hospital-view-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 46px;
+  margin-top: 18px;
+  padding: 0 14px;
+  border-radius: 6px;
+  white-space: nowrap;
 }
 
 .view-btn:hover,

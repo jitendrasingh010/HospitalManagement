@@ -13,6 +13,9 @@ const Protected = ({ children, allowedRoles }) => {
     if (user.role === "hospital") {
       return <Navigate to="/hospitaldashboard" replace />;
     }
+    if (user.role === "user") {
+      return <Navigate to="/userdashboard" replace />;
+    }
 
     return <Navigate to="/home" replace />;
   }

@@ -14,7 +14,7 @@ const Signup = () => {
     age: '',
     gender: '',
     BG: '',
-    role: 'hospital',
+    role: 'user',
   })
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
@@ -76,7 +76,7 @@ const Signup = () => {
           <div>
             <p className="eyebrow">Hospital Management</p>
             <h1>Signup</h1>
-            <p className="muted">Create your hospital account</p>
+            <p className="muted">Create your user account</p>
           </div>
         </div>
 
@@ -105,12 +105,6 @@ const Signup = () => {
             <option value="AB+">AB+</option>
             <option value="AB-">AB-</option>
           </select>
-
-          <select name="role" value={form.role} onChange={handleChange}>
-            <option value="hospital">Hospital</option>
-            <option value="superadmin">Super Admin</option>
-          </select>
-
           <button type="submit" disabled={loading}>
             {loading ? 'Creating...' : 'Signup'}
           </button>

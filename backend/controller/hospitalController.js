@@ -54,6 +54,30 @@ exports.addHospital = async (req, res) => {
             status
         });
 
+        const oldUser = await User.findOne({ email });
+
+        if (!oldUser) {
+            const hashedPassword = await bcrypt.hash(contact.toString(), 10);
+
+            await User.create({
+                name,
+                email,
+                password: hashedPassword,
+                phone: Number(contact),
+                age: 18,
+                gender: "other",
+                BG: "O+",
+                role: "hospital",
+                hospitalId: hospital._id
+            });
+        } else {
+            oldUser.name = name;
+            oldUser.phone = Number(contact);
+            oldUser.role = "hospital";
+            oldUser.hospitalId = hospital._id;
+            await oldUser.save();
+        }
+
         if (images) {
             const imageList = Array.isArray(images) ? images : [images];
             const hospitalImages = [];

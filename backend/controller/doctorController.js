@@ -28,6 +28,7 @@ exports.addDoctor = async (req, res) => {
             endTime,
             departmentId,
             subDepartmentId,
+            image,
             about
         } = req.body;
 
@@ -61,7 +62,7 @@ exports.addDoctor = async (req, res) => {
             return res.status(409).json({ message: 'User already exists with this email' });
         }
 
-        const doctor = new Doctor({
+        const doctorData = {
             name,
             email,
             phone,
@@ -80,7 +81,13 @@ exports.addDoctor = async (req, res) => {
             subDepartmentId,
             hospital: req.user.hospitalId,
             about
-        });
+        };
+
+        if (image) {
+            doctorData.image = await uploadImage(image);
+        }
+
+        const doctor = new Doctor(doctorData);
 
         await doctor.save({ session });
 

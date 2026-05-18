@@ -39,6 +39,8 @@ const Login = () => {
           navigate('/hospitaldashboard')
         } else if (data.user?.role === 'doctor') {
           navigate('/departmentprofile')
+        } else if (data.user?.role === 'user') {
+          navigate('/userdashboard')
         } else {
           navigate('/home')
         }

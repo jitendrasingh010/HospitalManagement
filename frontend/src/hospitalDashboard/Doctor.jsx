@@ -168,10 +168,6 @@ const Doctor = () => {
         availableDays: form.availableDays ? form.availableDays.split(',').map((day) => day.trim()) : [],
       }
 
-      if (!editId) {
-        delete payload.image
-      }
-
       const response = await fetch(url, {
         method: editId ? 'PUT' : 'POST',
         headers: {
@@ -398,18 +394,14 @@ const Doctor = () => {
               <input name="availableDays" placeholder="Days: Monday, Tuesday" value={form.availableDays} onChange={handleChange} />
               <input name="startTime" type="time" value={form.startTime} onChange={handleChange} />
               <input name="endTime" type="time" value={form.endTime} onChange={handleChange} />
-              {editId && (
-                <>
-                  <label className="doctor-image-field">
-                    <span>Profile image</span>
-                    <input name="image" type="file" accept="image/*" onChange={handleChange} />
-                  </label>
-                  {form.image && (
-                    <div className="doctor-image-preview">
-                      <img src={form.image} alt={form.name || 'Doctor'} />
-                    </div>
-                  )}
-                </>
+              <label className="doctor-image-field">
+                <span>Profile image</span>
+                <input name="image" type="file" accept="image/*" onChange={handleChange} />
+              </label>
+              {form.image && (
+                <div className="doctor-image-preview">
+                  <img src={form.image} alt={form.name || 'Doctor'} />
+                </div>
               )}
               <textarea name="about" placeholder="About doctor" value={form.about} onChange={handleChange} />
               <button type="submit">{editId ? 'Update' : 'Add'} Doctor</button>
