@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
 
@@ -12,20 +12,26 @@ const State = () => {
   const [country] = useState('India')
   const [editId, setEditId] = useState(null)
   const [message, setMessage] = useState('')
+  const [search, setSearch] = useState('')
+  const [sortBy, setSortBy] = useState('name')
+  const [loading, setLoading] = useState(true)
 
   const getStates = async () => {
     try {
+      setLoading(true)
       const response = await fetch(`${API_URL}/getstate`)
       const data = await response.json()
       setStates(data.states || [])
     } catch (error) {
       setMessage('State data could not be loaded')
       console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
   useEffect(() => {
-    getStates()
+    Promise.resolve().then(() => getStates())
   }, [])
 
   const handleSubmit = async (event) => {
@@ -85,6 +91,27 @@ const State = () => {
     }
   }
 
+  const searchText = search.toLowerCase().trim()
+
+  const filteredStates = states
+    .filter((item) => {
+      if (!searchText) {
+        return true
+      }
+
+      return (
+        item.state?.toLowerCase().includes(searchText) ||
+        item.country?.toLowerCase().includes(searchText)
+      )
+    })
+    .sort((a, b) => {
+      if (sortBy === 'newest') {
+        return (b.createdAt || b._id || '').localeCompare(a.createdAt || a._id || '')
+      }
+
+      return (a.state || '').localeCompare(b.state || '')
+    })
+
   return (
     <main className="page-shell">
       <div className="page-header">
@@ -113,7 +140,21 @@ const State = () => {
 
       {message && <p className="message">{message}</p>}
 
-      <div className="table-wrap">
+      <div className="hospital-toolbar">
+        <input
+          type="text"
+          placeholder="Search state or country"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+        <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+          <option value="name">Name A-Z</option>
+          <option value="newest">Newest first</option>
+        </select>
+      </div>
+
+      {!loading && filteredStates.length > 0 && (
+        <div className="table-wrap">
         <table>
           <thead>
             <tr>
@@ -124,7 +165,7 @@ const State = () => {
             </tr>
           </thead>
           <tbody>
-            {states.map((item, index) => (
+            {filteredStates.map((item, index) => (
               <tr key={item._id}>
                 <td>{index + 1}</td>
                 <td>{item.country || 'India'}</td>
@@ -138,6 +179,21 @@ const State = () => {
           </tbody>
         </table>
       </div>
+      )}
+
+      {loading && (
+        <div className="empty-state">
+          <h2>Loading states...</h2>
+          <p className="muted">Please wait.</p>
+        </div>
+      )}
+
+      {!loading && filteredStates.length === 0 && (
+        <div className="empty-state">
+          <h2>No state found</h2>
+          <p className="muted">Add a state or change search text.</p>
+        </div>
+      )}
     </main>
   )
 }

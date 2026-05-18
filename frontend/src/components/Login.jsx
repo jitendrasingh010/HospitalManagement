@@ -38,7 +38,7 @@ const Login = () => {
         if (data.user?.role === 'hospital') {
           navigate('/hospitaldashboard')
         } else if (data.user?.role === 'doctor') {
-          navigate('/departmentprofile')
+          navigate('/doctordashboard')
         } else if (data.user?.role === 'user') {
           navigate('/userdashboard')
         } else {
@@ -56,51 +56,80 @@ const Login = () => {
 
   return (
     <main className="login-page">
+      <section className="login-brand-panel">
+        <div className="brand-badge">H+</div>
+        <p className="eyebrow">Hospital Management</p>
+        <h1>Smart care starts with a simple login.</h1>
+        <p className="login-brand-text">
+          Manage hospitals, doctors, patients and appointments from one clean dashboard.
+        </p>
+
+        <div className="login-feature-grid">
+          <span><b>24/7</b>Access</span>
+          <span><b>4</b>Roles</span>
+          <span><b>Fast</b>Booking</span>
+        </div>
+      </section>
+
       <section className="login-box">
         <div className="theme-row">
+          <button className="back-btn" onClick={() => navigate('/')} type="button">Back to home</button>
           <button className="theme-btn" onClick={toggleTheme} title="Change theme">
             {theme === 'light' ? '☾' : '☀'}
           </button>
         </div>
+
         <div className="login-head">
           <div className="login-logo">H</div>
           <div>
             <p className="eyebrow">Hospital Management</p>
-            <h1>Login</h1>
+            <h1>Welcome Back</h1>
+            <p className="muted">Login with your registered account.</p>
           </div>
         </div>
 
         <form className="login-form" onSubmit={handleLogin}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-          <button type="submit">Login</button>
+          <label className="login-field">
+            <span>Email Address</span>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+          </label>
+
+          <label className="login-field">
+            <span>Password</span>
+            <input
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+          </label>
+
+          <button type="submit">Login Now</button>
         </form>
 
-        <button className="forgot-btn" onClick={() => navigate('/forget')} type="button">
-          Forgot Password?
-        </button>
-        <button className="forgot-btn" onClick={() => navigate('/signup')} type="button">
-          New user? Signup
-        </button>
+        <div className="login-links">
+          <button className="forgot-btn" onClick={() => navigate('/forget')} type="button">
+            Forgot Password?
+          </button>
+          <button className="forgot-btn" onClick={() => navigate('/signup')} type="button">
+            Create Account
+          </button>
+        </div>
+
         {message && <p className="message">{message}</p>}
 
         <div className="login-points">
           <span>Secure login</span>
-          <span>Master data</span>
-          <span>Profile access</span>
+          <span>Doctor panel</span>
+          <span>User panel</span>
+          <span>Hospital panel</span>
         </div>
       </section>
-     
     </main>
   )
 }

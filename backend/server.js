@@ -45,6 +45,9 @@ app.use('/doctor', doctorController);
 const appointmentController = require('./routes/appointmentRoute');
 app.use('/appointment', appointmentController);
 
+const medicineController = require('./routes/medicineRoute');
+app.use('/medicine', medicineController);
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

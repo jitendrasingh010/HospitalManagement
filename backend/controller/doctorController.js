@@ -143,6 +143,29 @@ exports.getDoctors = async (req, res) => {
     }
 };
 
+exports.getMyDoctorProfile = async (req, res) => {
+    try {
+        if (!req.user.doctorId) {
+            return res.status(404).json({ message: 'Doctor profile not found' });
+        }
+
+        const doctor = await Doctor.findById(req.user.doctorId)
+            .populate('hospital', 'name contact address')
+            .populate({
+                path: 'subDepartmentId',
+                populate: { path: 'departmentId', select: 'name' }
+            });
+
+        if (!doctor) {
+            return res.status(404).json({ message: 'Doctor profile not found' });
+        }
+
+        res.status(200).json({ message: 'Doctor profile', doctor });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 exports.updateDoctor = async (req, res) => {
     try {
         const { id } = req.params;

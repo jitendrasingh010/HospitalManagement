@@ -2120,3 +2120,695 @@ th {
     flex-direction: column;
   }
 }
+
+/* Attractive login screen */
+.login-page {
+  position: relative;
+  grid-template-columns: minmax(280px, 0.95fr) minmax(340px, 460px);
+  gap: 30px;
+  place-items: stretch center;
+  padding: 42px;
+  overflow: hidden;
+}
+
+.login-page::before,
+.login-page::after {
+  content: '';
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+  filter: blur(2px);
+}
+
+.login-page::before {
+  width: 340px;
+  height: 340px;
+  top: -110px;
+  right: -90px;
+  background: color-mix(in srgb, var(--primary), transparent 76%);
+  animation: floatSoft 7s ease-in-out infinite;
+}
+
+.login-page::after {
+  width: 260px;
+  height: 260px;
+  left: -80px;
+  bottom: -80px;
+  background: color-mix(in srgb, var(--blue), transparent 80%);
+  animation: floatSoft 8s ease-in-out infinite reverse;
+}
+
+.login-brand-panel,
+.login-box {
+  position: relative;
+  z-index: 1;
+}
+
+.login-brand-panel {
+  display: flex;
+  width: min(620px, 100%);
+  min-height: 620px;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 42px;
+  border: 1px solid color-mix(in srgb, var(--border), transparent 12%);
+  border-radius: 8px;
+  background:
+    linear-gradient(150deg, rgba(14, 116, 144, 0.92), rgba(37, 99, 235, 0.82) 52%, rgba(22, 163, 74, 0.76)),
+    var(--primary);
+  color: #ffffff;
+  box-shadow: 0 28px 80px var(--shadow-strong);
+  overflow: hidden;
+  animation: slideRight 0.55s ease both;
+}
+
+.login-brand-panel::before {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  right: -90px;
+  top: -80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.login-brand-panel::after {
+  content: '';
+  position: absolute;
+  inset: auto 34px 34px auto;
+  width: 150px;
+  height: 150px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  transform: rotate(14deg);
+}
+
+.login-brand-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.brand-badge {
+  display: grid;
+  width: 82px;
+  height: 82px;
+  margin-bottom: auto;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.18);
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.login-brand-panel .eyebrow {
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.login-brand-panel h1 {
+  max-width: 520px;
+  margin-top: 6px;
+  font-size: clamp(38px, 5vw, 64px);
+  line-height: 1.02;
+}
+
+.login-brand-text {
+  max-width: 510px;
+  margin: 18px 0 0;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.login-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.login-feature-grid span {
+  min-height: 86px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.13);
+  backdrop-filter: blur(14px);
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 800;
+}
+
+.login-feature-grid b {
+  display: block;
+  margin-bottom: 6px;
+  color: #ffffff;
+  font-size: 26px;
+}
+
+.login-box {
+  align-self: center;
+  width: min(480px, 100%);
+  padding: 34px;
+  border-radius: 8px;
+  animation: fadeUp 0.55s ease 0.08s both;
+}
+
+.login-box::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary), transparent 86%), transparent 44%);
+  pointer-events: none;
+}
+
+.login-box > * {
+  position: relative;
+  z-index: 1;
+}
+
+.theme-row {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.login-head {
+  margin-bottom: 26px;
+}
+
+.login-head h1 {
+  font-size: 32px;
+}
+
+.login-logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+}
+
+.login-field {
+  display: grid;
+  gap: 8px;
+}
+
+.login-field span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.login-form {
+  gap: 16px;
+}
+
+.login-form input {
+  min-height: 52px;
+  padding: 0 16px;
+}
+
+.login-form button {
+  min-height: 52px;
+  margin-top: 4px;
+  font-size: 16px;
+}
+
+.login-links {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 4px 0 16px;
+}
+
+.login-links .forgot-btn {
+  margin: 0;
+}
+
+.login-points {
+  padding-top: 18px;
+  border-top: 1px solid var(--border-soft);
+}
+
+@media (max-width: 900px) {
+  .login-page {
+    grid-template-columns: 1fr;
+    padding: 24px 16px;
+  }
+
+  .login-brand-panel {
+    min-height: auto;
+    padding: 28px;
+  }
+
+  .brand-badge {
+    margin-bottom: 42px;
+  }
+
+  .login-brand-panel h1 {
+    font-size: 38px;
+  }
+}
+
+@media (max-width: 560px) {
+  .login-brand-panel {
+    display: none;
+  }
+
+  .login-page {
+    place-items: center;
+  }
+
+  .login-box {
+    padding: 24px;
+  }
+
+  .login-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .login-links {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+/* Professional polish layer */
+html {
+  scroll-behavior: smooth;
+}
+
+body.light {
+  --bg:
+    radial-gradient(circle at 12% 8%, rgba(14, 116, 144, 0.10), transparent 28%),
+    radial-gradient(circle at 92% 2%, rgba(22, 163, 74, 0.08), transparent 30%),
+    #f4f7fb;
+  --card: rgba(255, 255, 255, 0.94);
+  --card-soft: rgba(248, 250, 252, 0.96);
+  --panel: #e6f7fb;
+  --ring: rgba(14, 116, 144, 0.18);
+  --glass: rgba(255, 255, 255, 0.72);
+  --shadow: rgba(27, 47, 86, 0.12);
+  --shadow-strong: rgba(27, 47, 86, 0.20);
+}
+
+body.dark {
+  --bg:
+    radial-gradient(circle at 12% 8%, rgba(34, 211, 238, 0.13), transparent 28%),
+    radial-gradient(circle at 92% 2%, rgba(96, 165, 250, 0.10), transparent 30%),
+    #111827;
+  --card: rgba(31, 41, 55, 0.94);
+  --card-soft: rgba(39, 50, 68, 0.96);
+  --panel: #17243a;
+  --ring: rgba(34, 211, 238, 0.20);
+  --glass: rgba(31, 41, 55, 0.72);
+  --shadow: rgba(0, 0, 0, 0.34);
+  --shadow-strong: rgba(0, 0, 0, 0.48);
+}
+
+body {
+  background: var(--bg);
+  background-attachment: fixed;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input,
+select,
+textarea {
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 4px var(--ring);
+}
+
+button {
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  transform: translateX(-120%);
+  transition: transform 0.55s ease;
+  pointer-events: none;
+}
+
+button:hover::after {
+  transform: translateX(120%);
+}
+
+button:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.page-shell,
+.dashboard-main,
+.hospital-main,
+.public-section,
+.public-stats,
+.public-footer {
+  animation: fadeUp 0.45s ease both;
+}
+
+.page-header,
+.dashboard-hero,
+.hospital-topbar {
+  border: 1px solid color-mix(in srgb, var(--border), transparent 8%);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--card), #ffffff 4%), var(--glass)),
+    var(--card);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 18px 48px var(--shadow);
+}
+
+.page-header {
+  padding: 22px;
+  border-radius: 8px;
+}
+
+.hospital-sidebar,
+.sidebar {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--card), var(--primary) 5%), var(--card));
+  box-shadow: 12px 0 34px var(--shadow);
+}
+
+.hospital-sidebar h2,
+.sidebar h2 {
+  letter-spacing: 0;
+}
+
+.hospital-menu button,
+.side-menu button,
+.mode-btn,
+.filter-btn,
+.ghost-btn {
+  background: color-mix(in srgb, var(--card-soft), var(--primary) 3%);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.03);
+}
+
+.hospital-menu button:hover,
+.side-menu button:hover,
+.mode-btn:hover,
+.filter-btn:hover,
+.ghost-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px var(--shadow);
+}
+
+.hospital-menu span,
+.menu-icon,
+.hospital-card-icon,
+.stat-icon,
+.login-logo,
+.public-logo span {
+  background: linear-gradient(135deg, var(--primary), var(--blue));
+  box-shadow: 0 12px 24px var(--shadow);
+}
+
+.hospital-card,
+.hospital-dash-card,
+.stat-card,
+.profile-card,
+.login-box,
+.master-form,
+.hospital-form,
+.department-form,
+.table-wrap,
+.public-hospital-card,
+.public-doctor-card,
+.hospital-status-box,
+.empty-state {
+  border: 1px solid color-mix(in srgb, var(--border), transparent 12%);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--card), #ffffff 3%), var(--card));
+  backdrop-filter: blur(14px);
+  box-shadow: 0 16px 38px var(--shadow);
+}
+
+.hospital-card,
+.hospital-dash-card,
+.stat-card,
+.public-hospital-card,
+.public-doctor-card,
+.hospital-status-box {
+  transform: translateY(0);
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+}
+
+.hospital-card:hover,
+.hospital-dash-card:hover,
+.stat-card:hover,
+.public-hospital-card:hover,
+.public-doctor-card:hover,
+.hospital-status-box:hover {
+  border-color: color-mix(in srgb, var(--primary), var(--border) 20%);
+  transform: translateY(-5px);
+  box-shadow: 0 24px 58px var(--shadow-strong);
+}
+
+.hospital-card-top {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.hospital-info-grid span,
+.profile-info,
+.public-info-row span,
+.doctor-card-info span,
+.popup-summary span,
+.subdept-list span {
+  border-color: color-mix(in srgb, var(--border-soft), transparent 8%);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--card-soft), var(--primary) 3%), var(--card-soft));
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hospital-info-grid span:hover,
+.profile-info:hover,
+.public-info-row span:hover,
+.doctor-card-info span:hover,
+.popup-summary span:hover,
+.subdept-list span:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px var(--shadow);
+}
+
+.status-pill,
+.login-points span,
+.service-row span,
+.status-active,
+.status-inactive {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor, transparent 78%);
+}
+
+.status-pill {
+  background: color-mix(in srgb, var(--primary), transparent 88%);
+}
+
+.theme-btn,
+.add-symbol-btn,
+.primary-link,
+.public-login-btn,
+.view-btn,
+.master-form button,
+.hospital-form button,
+.profile-form button,
+.login-form button,
+.department-form button,
+.doctor-form button,
+.appointment-form button {
+  background: linear-gradient(135deg, var(--primary), var(--blue));
+  box-shadow: 0 14px 28px var(--shadow);
+}
+
+.theme-btn:hover,
+.add-symbol-btn:hover,
+.primary-link:hover,
+.public-login-btn:hover,
+.view-btn:hover,
+.master-form button:hover,
+.hospital-form button:hover,
+.profile-form button:hover,
+.login-form button:hover,
+.department-form button:hover,
+.doctor-form button:hover,
+.appointment-form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 38px var(--shadow-strong);
+}
+
+.secondary-btn {
+  background: linear-gradient(135deg, var(--primary-dark), color-mix(in srgb, var(--primary-dark), var(--blue) 28%));
+  box-shadow: 0 12px 24px var(--shadow);
+}
+
+.danger-btn,
+.delete-icon {
+  background: linear-gradient(135deg, var(--danger), #f97316);
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--danger), transparent 72%);
+}
+
+.hospital-toolbar,
+.public-filter-bar {
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 14px 34px var(--shadow);
+}
+
+.popup-bg {
+  animation: fadeIn 0.22s ease both;
+  backdrop-filter: blur(6px);
+}
+
+.popup-box,
+.public-popup,
+.doctor-detail-popup {
+  border-color: color-mix(in srgb, var(--border), transparent 8%);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--card), #ffffff 4%), var(--card));
+  animation: popupIn 0.28s ease both;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.38);
+}
+
+.popup-head {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.doctor-form input,
+.doctor-form select,
+.doctor-form textarea,
+.appointment-form input,
+.profile-form input,
+.profile-form select,
+.hospital-toolbar input,
+.hospital-toolbar select,
+.master-form input,
+.master-form select,
+.hospital-form input,
+.hospital-form select,
+.hospital-form textarea,
+.department-form input,
+.department-form textarea,
+.login-form input,
+.login-form select,
+.login-form textarea {
+  background: color-mix(in srgb, var(--card), var(--card-soft) 35%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.profile-avatar,
+.doctor-avatar,
+.doctor-table-image,
+.large-avatar {
+  box-shadow: 0 14px 30px var(--shadow);
+}
+
+tbody tr {
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+tbody tr:hover {
+  transform: scale(1.005);
+}
+
+.public-header {
+  box-shadow: 0 12px 30px var(--shadow);
+}
+
+.hero-info-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-info-panel::before {
+  content: '';
+  position: absolute;
+  inset: -60% auto auto -30%;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  animation: floatSoft 6s ease-in-out infinite;
+}
+
+.hero-info-panel > * {
+  position: relative;
+}
+
+@keyframes popupIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes floatSoft {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(26px, 18px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .page-header,
+  .hospital-topbar,
+  .dashboard-hero {
+    padding: 18px;
+  }
+
+  .hospital-card,
+  .hospital-dash-card,
+  .profile-card,
+  .login-box,
+  .popup-box,
+  .public-popup {
+    box-shadow: 0 12px 28px var(--shadow);
+  }
+
+  .hospital-menu button,
+  .side-menu button {
+    min-height: 44px;
+  }
+}

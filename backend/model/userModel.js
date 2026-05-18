@@ -35,7 +35,7 @@ const userSchema=new mongoose.Schema({
     },
     role:{
         type:String,
-        enum:['superadmin','hospital','user'],
+        enum:['superadmin','hospital','doctor','user'],
         default:'user'
     },
     hospitalId:{

@@ -85,3 +85,24 @@ exports.getMyAppointments = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+exports.getDoctorAppointments = async (req, res) => {
+    try {
+        if (!req.user.doctorId) {
+            return res.status(404).json({ message: 'Doctor not found' });
+        }
+
+        const appointments = await Appointment.find({ doctorId: req.user.doctorId })
+            .populate('hospitalId', 'name contact address')
+            .populate('doctorId', 'name specialization fees')
+            .populate('userId', 'name email phone age gender')
+            .sort({ date: -1, createdAt: -1 });
+
+        res.status(200).json({
+            message: 'Doctor appointments',
+            appointments
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
 
@@ -13,6 +13,9 @@ const City = () => {
   const [form, setForm] = useState({ city: '', district: '', state: '' })
   const [editId, setEditId] = useState(null)
   const [message, setMessage] = useState('')
+  const [search, setSearch] = useState('')
+  const [sortBy, setSortBy] = useState('city')
+  const [loading, setLoading] = useState(true)
 
   const getCities = async () => {
     const response = await fetch(`${API_URL}/city/getcity`)
@@ -35,12 +38,15 @@ const City = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
+        setLoading(true)
         await getCities()
         await getDistricts()
         await getStates()
       } catch (error) {
         setMessage('City data could not be loaded')
         console.error(error)
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -116,6 +122,34 @@ const City = () => {
     }
   }
 
+  const searchText = search.toLowerCase().trim()
+
+  const filteredCities = cities
+    .filter((item) => {
+      if (!searchText) {
+        return true
+      }
+
+      return (
+        item.city?.toLowerCase().includes(searchText) ||
+        item.district?.district?.toLowerCase().includes(searchText) ||
+        item.state?.state?.toLowerCase().includes(searchText)
+      )
+    })
+    .sort((a, b) => {
+      if (sortBy === 'district') {
+        return (a.district?.district || '').localeCompare(b.district?.district || '')
+      }
+      if (sortBy === 'state') {
+        return (a.state?.state || '').localeCompare(b.state?.state || '')
+      }
+      if (sortBy === 'newest') {
+        return (b.createdAt || b._id || '').localeCompare(a.createdAt || a._id || '')
+      }
+
+      return (a.city || '').localeCompare(b.city || '')
+    })
+
   return (
     <main className="page-shell">
       <div className="page-header">
@@ -155,7 +189,23 @@ const City = () => {
 
       {message && <p className="message">{message}</p>}
 
-      <div className="table-wrap">
+      <div className="hospital-toolbar">
+        <input
+          type="text"
+          placeholder="Search city, district or state"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+        <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+          <option value="city">City A-Z</option>
+          <option value="district">District A-Z</option>
+          <option value="state">State A-Z</option>
+          <option value="newest">Newest first</option>
+        </select>
+      </div>
+
+      {!loading && filteredCities.length > 0 && (
+        <div className="table-wrap">
         <table>
           <thead>
             <tr>
@@ -167,7 +217,7 @@ const City = () => {
             </tr>
           </thead>
           <tbody>
-            {cities.map((item, index) => (
+            {filteredCities.map((item, index) => (
               <tr key={item._id}>
                 <td>{index + 1}</td>
                 <td>{item.city}</td>
@@ -182,6 +232,21 @@ const City = () => {
           </tbody>
         </table>
       </div>
+      )}
+
+      {loading && (
+        <div className="empty-state">
+          <h2>Loading cities...</h2>
+          <p className="muted">Please wait.</p>
+        </div>
+      )}
+
+      {!loading && filteredCities.length === 0 && (
+        <div className="empty-state">
+          <h2>No city found</h2>
+          <p className="muted">Add a city or change search text.</p>
+        </div>
+      )}
     </main>
   )
 }

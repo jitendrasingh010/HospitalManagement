@@ -34,9 +34,9 @@ const User = () => {
             <span>▦</span>
             My Appointments
           </button>
-          <button onClick={logout}>
-            <span>X</span>
-            Logout
+          <button onClick={() => navigate('/profile')}>
+            <span>●</span>
+            Profile
           </button>
         </nav>
       </aside>
@@ -50,6 +50,8 @@ const User = () => {
           <button className="theme-btn" onClick={toggleTheme} title="Change theme">
             {theme === 'light' ? '☾' : '☀'}
           </button>
+          <button className="secondary-btn" onClick={() => navigate('/profile')}>Profile</button>
+          <button className="danger-btn" onClick={logout}>Logout</button>
         </header>
 
         <section className="hospital-dash-cards">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
 
@@ -12,6 +12,9 @@ const District = () => {
   const [form, setForm] = useState({ district: '', state: '' })
   const [editId, setEditId] = useState(null)
   const [message, setMessage] = useState('')
+  const [search, setSearch] = useState('')
+  const [sortBy, setSortBy] = useState('district')
+  const [loading, setLoading] = useState(true)
 
   const getStates = async () => {
     const response = await fetch(`${API_URL}/state/getstate`)
@@ -28,11 +31,14 @@ const District = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
+        setLoading(true)
         await getStates()
         await getDistricts()
       } catch (error) {
         setMessage('District data could not be loaded')
         console.error(error)
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -96,6 +102,30 @@ const District = () => {
     }
   }
 
+  const searchText = search.toLowerCase().trim()
+
+  const filteredDistricts = districts
+    .filter((item) => {
+      if (!searchText) {
+        return true
+      }
+
+      return (
+        item.district?.toLowerCase().includes(searchText) ||
+        item.state?.state?.toLowerCase().includes(searchText)
+      )
+    })
+    .sort((a, b) => {
+      if (sortBy === 'state') {
+        return (a.state?.state || '').localeCompare(b.state?.state || '')
+      }
+      if (sortBy === 'newest') {
+        return (b.createdAt || b._id || '').localeCompare(a.createdAt || a._id || '')
+      }
+
+      return (a.district || '').localeCompare(b.district || '')
+    })
+
   return (
     <main className="page-shell">
       <div className="page-header">
@@ -129,7 +159,22 @@ const District = () => {
 
       {message && <p className="message">{message}</p>}
 
-      <div className="table-wrap">
+      <div className="hospital-toolbar">
+        <input
+          type="text"
+          placeholder="Search district or state"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+        <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+          <option value="district">District A-Z</option>
+          <option value="state">State A-Z</option>
+          <option value="newest">Newest first</option>
+        </select>
+      </div>
+
+      {!loading && filteredDistricts.length > 0 && (
+        <div className="table-wrap">
         <table>
           <thead>
             <tr>
@@ -140,7 +185,7 @@ const District = () => {
             </tr>
           </thead>
           <tbody>
-            {districts.map((item, index) => (
+            {filteredDistricts.map((item, index) => (
               <tr key={item._id}>
                 <td>{index + 1}</td>
                 <td>{item.district}</td>
@@ -154,6 +199,21 @@ const District = () => {
           </tbody>
         </table>
       </div>
+      )}
+
+      {loading && (
+        <div className="empty-state">
+          <h2>Loading districts...</h2>
+          <p className="muted">Please wait.</p>
+        </div>
+      )}
+
+      {!loading && filteredDistricts.length === 0 && (
+        <div className="empty-state">
+          <h2>No district found</h2>
+          <p className="muted">Add a district or change search text.</p>
+        </div>
+      )}
     </main>
   )
 }

@@ -5,6 +5,7 @@ const auth = require('../middelware/auth');
 
 router.post('/add', auth, doctorController.addDoctor);
 router.get('/get', auth, doctorController.getDoctors);
+router.get('/myprofile', auth, doctorController.getMyDoctorProfile);
 router.put('/update/:id', auth, doctorController.updateDoctor);
 router.delete('/delete/:id', auth, doctorController.deleteDoctor);
 router.put('/softdelete/:id', auth, doctorController.softDeleteDoctor);
