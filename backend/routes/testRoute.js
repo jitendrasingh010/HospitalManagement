@@ -1,0 +1,11 @@
+const express = require('express');
+const router=express.Router();
+const testController=require('../controller/testController');
+const auth=require('../middelware/auth');
+router.post('/addtest',auth,testController.addtest);
+router.get('/gettest',auth,testController.gettest);
+router.put('/updatetest/:id',auth,testController.updatetest);
+router.delete('/deletetest/:id',auth,testController.deletetest);
+router.put('/softdelete/:id',auth,testController.softdelete);
+router.put('/restore/:id',auth,testController.restoretest);    
+module.exports=router;

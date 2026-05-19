@@ -13,7 +13,8 @@ import User from './components/User'
 import Appointment from './components/Appointment'
 import HospitalDash from './hospitalDashboard/HospitalDash'
 import Department from './hospitalDashboard/Department'
-import DepartmentProfile from './hospitalDashboard/DepartmentProfile'
+import HospitalProfile from './hospitalDashboard/HospitalProfile'
+import AddLab from './hospitalDashboard/AddLab'
 import SubDepartment from './hospitalDashboard/SubDepartment'
 import Doctor from './hospitalDashboard/Doctor'
 import Protected from './protectedRoute/protectedRoute'
@@ -21,6 +22,9 @@ import DetailHome from './components/DetailHome.jsx'
 import Doctordashboard from './doctor/Doctordashboard'
 import DoctorAppointment from './doctor/DoctorAppointment'
 import DoctorProfile from './doctor/DoctorProfile'
+import Labdashboard from './labdashobard/Labdashboard'
+import LabProfile from './labdashobard/LabProfile'
+import Test from './labdashobard/Test'
 
 const App = () => {
   return (
@@ -44,10 +48,14 @@ const App = () => {
         <Route path="/departments" element={<Protected allowedRoles={['hospital']}><Department /></Protected>} />
         <Route path="/subdepartments" element={<Protected allowedRoles={['hospital']}><SubDepartment /></Protected>} />
         <Route path="/doctors" element={<Protected allowedRoles={['hospital']}><Doctor /></Protected>} />
-        <Route path="/departmentprofile" element={<Protected allowedRoles={['hospital']}><DepartmentProfile /></Protected>} />
+        <Route path="/hospitalprofile" element={<Protected allowedRoles={['hospital']}><HospitalProfile /></Protected>} />
+        <Route path="/addlab" element={<Protected allowedRoles={['hospital']}><AddLab /></Protected>} />
         <Route path="/doctordashboard" element={<Protected allowedRoles={['doctor']}><Doctordashboard /></Protected>} />
         <Route path="/doctorappointment" element={<Protected allowedRoles={['doctor']}><DoctorAppointment /></Protected>} />
         <Route path="/doctorprofile" element={<Protected allowedRoles={['doctor']}><DoctorProfile /></Protected>} />
+        <Route path="/labdashboard" element={<Protected allowedRoles={['lab']}><Labdashboard /></Protected>} />
+        <Route path="/labprofile" element={<Protected allowedRoles={['lab']}><LabProfile /></Protected>} />
+        <Route path="/test" element={<Protected allowedRoles={['lab', 'hospital']}><Test /></Protected>} />
       </Routes>
     </BrowserRouter>
   )

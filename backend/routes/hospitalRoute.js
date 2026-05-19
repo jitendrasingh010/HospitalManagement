@@ -7,6 +7,7 @@ router.get('/public',hospitalController.getPublicHospitals);
 router.get('/public-doctors',hospitalController.getPublicDoctors);
 router.get('/public/:id',hospitalController.getPublicHospitalDetails);
 router.get('/get',auth,hospitalController.getHospital);
+router.get('/tests',auth,hospitalController.getHospitalTests);
 router.put('/approve/:id',auth,hospitalController.approveHospital);
 router.put('/reject/:id',auth,hospitalController.rejectHospital);
 router.put('/update/:id',auth,hospitalController.updateHospital);

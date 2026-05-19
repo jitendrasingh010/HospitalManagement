@@ -35,7 +35,7 @@ const userSchema=new mongoose.Schema({
     },
     role:{
         type:String,
-        enum:['superadmin','hospital','doctor','user'],
+        enum:['superadmin','hospital','doctor','user','lab'],
         default:'user'
     },
     hospitalId:{
@@ -45,6 +45,10 @@ const userSchema=new mongoose.Schema({
     doctorId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Doctor',
+    },
+    labId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Lab',
     },
     otp:{
         type:String,

@@ -17,37 +17,42 @@ mongoose.connect(process.env.MONGO_URL)
     console.log('Database connection error:', err);
 });
 
-const userController = require('./routes/userRoute');
-app.use('/hospital', userController);
+const userRoute = require('./routes/userRoute');
+app.use('/hospital', userRoute );
 
-const stateController = require('./routes/StateRoute');
-app.use('/state', stateController);
+const stateRoute  = require('./routes/StateRoute');
+app.use('/state', stateRoute );
  
-const districtController = require('./routes/districtRoute');
-app.use('/district', districtController);
+const districtRoute  = require('./routes/districtRoute');
+app.use('/district', districtRoute );
 
-const cityController = require('./routes/cityRoute');
-app.use('/city', cityController);
+const cityRoute  = require('./routes/cityRoute');
+app.use('/city', cityRoute );
 
-const hospitalController = require('./routes/hospitalRoute');
-app.use('/hospitalmanagement', hospitalController);
+const hospitalRoute = require('./routes/hospitalRoute');
+app.use('/hospitalmanagement', hospitalRoute );
 const PORT = process.env.PORT || 5000;
 
-const departmentController = require('./routes/departmentRoute');
-app.use('/department', departmentController);
+const departmentRoute = require('./routes/departmentRoute');
+app.use('/department', departmentRoute );
 
-const subDepartmentController = require('./routes/subdepartmentRoute');
-app.use('/subdepartment', subDepartmentController);
+const subDepartmentRoute  = require('./routes/subdepartmentRoute');
+app.use('/subdepartment', subDepartmentRoute );
 
-const doctorController = require('./routes/doctorRoute');
-app.use('/doctor', doctorController);
+const doctorRoute  = require('./routes/doctorRoute');
+app.use('/doctor', doctorRoute );
 
-const appointmentController = require('./routes/appointmentRoute');
-app.use('/appointment', appointmentController);
+const appointmentRoute  = require('./routes/appointmentRoute');
+app.use('/appointment', appointmentRoute );
 
-const medicineController = require('./routes/medicineRoute');
-app.use('/medicine', medicineController);
+const medicineRoute  = require('./routes/medicineRoute');
+app.use('/medicine', medicineRoute );
 
+const LabRoute=require('./routes/labRoute');
+app.use('/lab',LabRoute )
+
+const testRoute=require('./routes/testRoute');
+app.use('/test',testRoute )
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

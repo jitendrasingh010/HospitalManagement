@@ -4,6 +4,8 @@ const User = require('../model/userModel');
 const Doctor = require('../model/doctorModel');
 const Department = require('../model/departmentModel');
 const SubDepartment = require('../model/subdepartmentModel');
+const Lab = require('../model/labModel');
+const Test = require('../model/testModel');
 const bcrypt = require('bcrypt');
 const { randomUUID } = require('crypto');
 const { uploadImage } = require('../cloudnary/cloudnary');
@@ -226,6 +228,12 @@ exports.getPublicHospitalDetails = async (req, res) => {
             populate: { path: 'departmentId' }
         });
 
+        const labs = await Lab.find({ hospitalID: hospitalId, status: "active" }).select('_id name');
+        const tests = await Test.find({
+            labId: { $in: labs.map((lab) => lab._id) },
+            status: "active"
+        }).populate('labId', 'name');
+
         res.status(200).json({
             message: "Hospital details",
             hospital: {
@@ -233,8 +241,32 @@ exports.getPublicHospitalDetails = async (req, res) => {
                 images: hospitalImages ? hospitalImages.img : []
             },
             doctors,
-            subDepartments
+            subDepartments,
+            tests
         });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.getHospitalTests = async (req, res) => {
+    try {
+        if (!req.user.hospitalId) {
+            return res.status(403).json({ message: "Only hospital can get tests" });
+        }
+
+        const labs = await Lab.find({ hospitalID: req.user.hospitalId }).select('_id');
+        let tests = [];
+
+        for (const lab of labs) {
+            const labTests = await Test.find({ labId: lab._id })
+                .populate('labId', 'name email')
+                .sort({ createdAt: -1 });
+
+            tests = [...tests, ...labTests];
+        }
+
+        res.status(200).json({ message: "Hospital tests", tests });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

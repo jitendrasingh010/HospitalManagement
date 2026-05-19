@@ -1,4 +1,7 @@
 const User = require('../model/userModel');
+const Doctor = require('../model/doctorModel');
+const Lab = require('../model/labModel');
+const Hospital = require('../model/hospitalModel');
 const bcrypt = require('bcrypt');
 const secretKey = 'secretKey@123';
 const jwt = require('jsonwebtoken');
@@ -32,6 +35,42 @@ exports.login = async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
+        if (user.role === 'doctor') {
+            const doctor = await Doctor.findById(user.doctorId);
+
+            if (!doctor) {
+                return res.status(404).json({ message: 'Doctor profile not found' });
+            }
+
+            if (doctor.status === 'inactive') {
+                return res.status(403).json({ message: 'Your doctor account is inactive' });
+            }
+        }
+
+        if (user.role === 'lab') {
+            const lab = await Lab.findById(user.labId);
+
+            if (!lab) {
+                return res.status(404).json({ message: 'Lab profile not found' });
+            }
+
+            if (lab.status === 'inactive') {
+                return res.status(403).json({ message: 'Your lab account is inactive' });
+            }
+        }
+
+        if (user.role === 'hospital') {
+            const hospital = await Hospital.findById(user.hospitalId);
+
+            if (!hospital) {
+                return res.status(404).json({ message: 'Hospital profile not found' });
+            }
+
+            if (hospital.status !== 'approved') {
+                return res.status(403).json({ message: 'Your hospital account is not active' });
+            }
+        }
+
         const token = jwt.sign({ email: user.email }, secretKey, { expiresIn: '1h' });
         res.status(200).json({
             message: 'Login successful',
@@ -42,7 +81,8 @@ exports.login = async (req, res) => {
                 email: user.email,
                 role: user.role,
                 hospitalId: user.hospitalId,
-                doctorId: user.doctorId
+                doctorId: user.doctorId,
+                labId: user.labId
             }
         });
     } catch (error) {

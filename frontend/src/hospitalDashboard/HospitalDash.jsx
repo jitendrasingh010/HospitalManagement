@@ -82,10 +82,19 @@ const HospitalDash = () => {
             <span>Dr</span>
             Doctors
           </button>
-          <button onClick={() => navigate('/departmentprofile')}>
+          <button onClick={() => navigate('/hospitalprofile')}>
             <span>●</span>
             Profile
           </button>
+          <button onClick={() => navigate('/addlab')}>
+            <span>●</span>
+            Add Lab
+          </button>
+          <button onClick={() => navigate('/test')}>
+            <span>T</span>
+            Tests
+          </button>
+          
         </nav>
       </aside>
 
@@ -114,6 +123,16 @@ const HospitalDash = () => {
             <span className="hospital-card-icon">Dr</span>
             <b>Doctors</b>
             <small>Add, edit, show and delete doctors</small>
+          </button>
+          <button className="hospital-dash-card" onClick={() => navigate('/addlab')}>
+            <span className="hospital-card-icon">L</span>
+            <b>Labs</b>
+            <small>Add, edit, show and delete labs</small>
+          </button>
+          <button className="hospital-dash-card" onClick={() => navigate('/test')}>
+            <span className="hospital-card-icon">T</span>
+            <b>Tests</b>
+            <small>Add, edit, show and delete lab tests</small>
           </button>
         </section>
       </section>
