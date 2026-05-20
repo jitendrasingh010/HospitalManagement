@@ -1,4 +1,5 @@
 const Medicine = require('../model/medicineModel');
+const Appointment = require('../model/appointmentModel');
 
 exports.addMedicine = async (req, res) => {
     try {
@@ -7,6 +8,7 @@ exports.addMedicine = async (req, res) => {
             patientId,
             doctorId,
             hospitalId,
+            test,
             name,
             description,
             dosage,
@@ -17,8 +19,14 @@ exports.addMedicine = async (req, res) => {
             instructions
         } = req.body;
 
-        if (!appointmentId || !patientId || !doctorId || !hospitalId || !name || !dosage || !timing || !duration) {
-            return res.status(400).json({ message: 'Appointment, patient, doctor, hospital, medicine, dosage, timing and duration are required' });
+        if (!appointmentId || !patientId || !doctorId || !hospitalId || !test || !name || !dosage || !timing || !duration) {
+            return res.status(400).json({ message: 'Appointment, patient, doctor, hospital, test, medicine, dosage, timing and duration are required' });
+        }
+
+        const oldMedicine = await Medicine.findOne({ appointmentId });
+
+        if (oldMedicine) {
+            return res.status(400).json({ message: 'This appointment is already reached' });
         }
 
         const medicineQuantity = Number(quantity || 1);
@@ -29,6 +37,7 @@ exports.addMedicine = async (req, res) => {
             patientId,
             doctorId,
             hospitalId,
+            test,
             name,
             description,
             dosage,
@@ -40,6 +49,8 @@ exports.addMedicine = async (req, res) => {
             instructions,
             isReached: true
         });
+
+        await Appointment.findByIdAndUpdate(appointmentId, { isReached: true });
 
         res.status(201).json({ message: 'Medicine added successfully', medicine });
     } catch (error) {
@@ -54,7 +65,8 @@ exports.getAppointmentMedicines = async (req, res) => {
         const medicines = await Medicine.find({
             appointmentId,
             patientId: req.user._id
-        }).sort({ createdAt: -1 });
+        }).populate('test', 'name price')
+            .sort({ createdAt: -1 });
 
         res.status(200).json({
             message: 'Medicine details',

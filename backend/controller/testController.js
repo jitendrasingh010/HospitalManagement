@@ -62,7 +62,7 @@ exports.gettest=async(req,res)=>{
             return res.status(200).json({ message: 'Tests loaded successfully', tests });
         }
 
-        if (req.user.role === 'hospital') {
+        if (req.user.role === 'hospital' || req.user.role === 'doctor') {
             const labs = await Lab.find({ hospitalID: req.user.hospitalId }).select('_id');
 
             for (const lab of labs) {
@@ -76,7 +76,7 @@ exports.gettest=async(req,res)=>{
             return res.status(200).json({ message: 'Tests loaded successfully', tests });
         }
 
-        res.status(403).json({ message: 'Only hospital or lab can get tests' });
+        res.status(403).json({ message: 'Only hospital, doctor or lab can get tests' });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

@@ -21,6 +21,11 @@ const medicineSchema = new mongoose.Schema({
         ref: 'Hospital',
         required: true
     },
+    test:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Test',
+        required:true
+    },
     name: {
         type: String,
         required: true
@@ -56,6 +61,9 @@ const medicineSchema = new mongoose.Schema({
     },
     instructions: {
         type: String
+    },
+    nextDate:{
+        type:Date
     },
     isReached: {
         type: Boolean,

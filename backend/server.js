@@ -53,6 +53,10 @@ app.use('/lab',LabRoute )
 
 const testRoute=require('./routes/testRoute');
 app.use('/test',testRoute )
+
+const testreportRoute=require('./routes/testreportRoute')
+app.use('/testReport',testreportRoute)
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

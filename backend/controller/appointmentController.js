@@ -2,6 +2,7 @@ const Appointment = require('../model/appointmentModel');
 const Doctor = require('../model/doctorModel');
 const Hospital = require('../model/hospitalModel');
 const User = require('../model/userModel');
+const Medicine = require('../model/medicineModel');
 const transporter = require('../nodemailer/nodemailer');
 
 const formatAppointmentDate = (date) => {
@@ -92,11 +93,18 @@ exports.getDoctorAppointments = async (req, res) => {
             return res.status(404).json({ message: 'Doctor not found' });
         }
 
-        const appointments = await Appointment.find({ doctorId: req.user.doctorId })
+        const appointmentsData = await Appointment.find({ doctorId: req.user.doctorId })
             .populate('hospitalId', 'name contact address')
             .populate('doctorId', 'name specialization fees')
             .populate('userId', 'name email phone age gender')
             .sort({ date: -1, createdAt: -1 });
+
+        const appointments = await Promise.all(appointmentsData.map(async (item) => {
+            const appointment = item.toObject();
+            const medicine = await Medicine.findOne({ appointmentId: item._id }).select('_id');
+            appointment.isReached = Boolean(item.isReached || medicine);
+            return appointment;
+        }));
 
         res.status(200).json({
             message: 'Doctor appointments',
