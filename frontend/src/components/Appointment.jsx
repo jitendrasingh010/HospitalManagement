@@ -4,6 +4,7 @@ import useTheme from '../customhook/useTheme'
 
 const API_URL = 'http://localhost:5000/appointment'
 const MEDICINE_URL = 'http://localhost:5000/medicine'
+const TEST_REPORT_URL = 'http://localhost:5000/testReport'
 
 const Appointment = () => {
   const navigate = useNavigate()
@@ -16,6 +17,7 @@ const Appointment = () => {
   const [showPopup, setShowPopup] = useState(false)
   const [selectedAppointment, setSelectedAppointment] = useState(null)
   const [medicines, setMedicines] = useState([])
+  const [reports, setReports] = useState([])
   const [medicineLoading, setMedicineLoading] = useState(false)
 
   const getAppointments = async () => {
@@ -63,22 +65,36 @@ const Appointment = () => {
       setShowPopup(true)
       setMedicineLoading(true)
       setMedicines([])
+      setReports([])
 
       const token = localStorage.getItem('token')
-      const response = await fetch(`${MEDICINE_URL}/appointment/${appointment._id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      const data = await response.json()
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      }
+      const [medicineResponse, reportResponse] = await Promise.all([
+        fetch(`${MEDICINE_URL}/appointment/${appointment._id}`, { headers }),
+        fetch(`${TEST_REPORT_URL}/get`, { headers }),
+      ])
+      const medicineData = await medicineResponse.json()
+      const reportData = await reportResponse.json()
 
-      if (response.ok) {
-        setMedicines(data.medicines || [])
+      if (medicineResponse.ok) {
+        setMedicines(medicineData.medicines || [])
       } else {
-        setMessage(data.message)
+        setMessage(medicineData.message)
+      }
+
+      if (reportResponse.ok) {
+        const appointmentReports = (reportData.reports || []).filter((report) => {
+          const reportAppointmentId = report.appointmentId?._id || report.appointmentId
+          return reportAppointmentId === appointment._id
+        })
+        setReports(appointmentReports)
+      } else {
+        setMessage(reportData.message)
       }
     } catch (error) {
-      setMessage('Medicine details load nahi ho payi')
+      setMessage('Medicine aur report details load nahi ho payi')
       console.error(error)
     } finally {
       setMedicineLoading(false)
@@ -89,7 +105,15 @@ const Appointment = () => {
     setShowPopup(false)
     setSelectedAppointment(null)
     setMedicines([])
+    setReports([])
   }
+
+  const getReportForMedicine = (medicineId) => (
+    reports.find((report) => {
+      const reportMedicineId = report.medicineId?._id || report.medicineId
+      return reportMedicineId === medicineId
+    })
+  )
 
   const searchText = search.toLowerCase().trim()
 
@@ -227,28 +251,49 @@ const Appointment = () => {
 
             {!medicineLoading && medicines.length > 0 && (
               <div className="hospital-grid">
-                {medicines.map((medicine) => (
-                  <article className="hospital-card" key={medicine._id}>
-                    <div className="hospital-card-top">
-                      <div>
-                        <span className="status-pill">Medicine</span>
-                        <h2>{medicine.name}</h2>
+                {medicines.map((medicine) => {
+                  const report = getReportForMedicine(medicine._id)
+
+                  return (
+                    <article className="hospital-card" key={medicine._id}>
+                      <div className="hospital-card-top">
+                        <div>
+                          <span className="status-pill">
+                            {report ? 'Report Ready' : 'Medicine'}
+                          </span>
+                          <h2>{medicine.name}</h2>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="hospital-info-grid">
-                      <span><b>Dosage</b>{medicine.dosage || '-'}</span>
-                      <span><b>Timing</b>{medicine.timing || '-'}</span>
-                      <span><b>Duration</b>{medicine.duration || '-'}</span>
-                      <span><b>Quantity</b>{medicine.quantity || 0}</span>
-                      <span><b>Price</b>Rs. {medicine.price || 0}</span>
-                      <span><b>Total</b>Rs. {medicine.totalPrice || 0}</span>
-                    </div>
+                      <div className="hospital-info-grid">
+                        <span><b>Test</b>{report?.testId?.name || medicine.test?.name || '-'}</span>
+                        <span><b>Test Price</b>Rs. {report?.testId?.price || medicine.test?.price || 0}</span>
+                        <span><b>Dosage</b>{medicine.dosage || '-'}</span>
+                        <span><b>Timing</b>{medicine.timing || '-'}</span>
+                        <span><b>Duration</b>{medicine.duration || '-'}</span>
+                        <span><b>Quantity</b>{medicine.quantity || 0}</span>
+                        <span><b>Price</b>Rs. {medicine.price || 0}</span>
+                        <span><b>Total</b>Rs. {medicine.totalPrice || 0}</span>
+                      </div>
 
-                    {medicine.description && <p className="hospital-desc">{medicine.description}</p>}
-                    {medicine.instructions && <p className="hospital-desc"><b>Instructions: </b>{medicine.instructions}</p>}
-                  </article>
-                ))}
+                      {medicine.description && <p className="hospital-desc">{medicine.description}</p>}
+                      {medicine.instructions && <p className="hospital-desc"><b>Instructions: </b>{medicine.instructions}</p>}
+                      {report && (
+                        <div className="hospital-info-grid">
+                          <span><b>Result</b>{report.result || '-'}</span>
+                          <span><b>Normal Range</b>{report.normalRange || '-'}</span>
+                          <span><b>Remark</b>{report.remark || '-'}</span>
+                          <span><b>Report Date</b>{getDate(report.createdAt)}</span>
+                        </div>
+                      )}
+                      {report?.image && (
+                        <div className="doctor-image-preview">
+                          <img src={report.image} alt="Report" />
+                        </div>
+                      )}
+                    </article>
+                  )
+                })}
               </div>
             )}
           </section>

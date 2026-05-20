@@ -25,6 +25,7 @@ import DoctorProfile from './doctor/DoctorProfile'
 import Labdashboard from './labdashobard/Labdashboard'
 import LabProfile from './labdashobard/LabProfile'
 import Test from './labdashobard/Test'
+import TestReport from './labdashobard/TestReport'
 
 const App = () => {
   return (
@@ -56,6 +57,7 @@ const App = () => {
         <Route path="/labdashboard" element={<Protected allowedRoles={['lab']}><Labdashboard /></Protected>} />
         <Route path="/labprofile" element={<Protected allowedRoles={['lab']}><LabProfile /></Protected>} />
         <Route path="/test" element={<Protected allowedRoles={['lab', 'hospital']}><Test /></Protected>} />
+        <Route path="/testreport" element={<Protected allowedRoles={['lab', 'hospital']}><TestReport /></Protected>} />
       </Routes>
     </BrowserRouter>
   )

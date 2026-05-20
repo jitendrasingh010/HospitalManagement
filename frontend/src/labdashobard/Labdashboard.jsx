@@ -53,6 +53,10 @@ const Labdashboard = () => {
             <span>T</span>
             Tests
           </button>
+          <button onClick={() => navigate('/testreport')}>
+            <span>R</span>
+            Reports
+          </button>
           <button onClick={toggleTheme}>
             <span>{theme === 'light' ? 'D' : 'L'}</span>
             {theme === 'light' ? 'Dark' : 'Light'}
@@ -82,11 +86,11 @@ const Labdashboard = () => {
             <b>Tests</b>
             <small>Add, edit, show and delete tests</small>
           </button>
-          <div className="hospital-dash-card">
+          <button className="hospital-dash-card" onClick={() => navigate('/testreport')}>
             <span className="hospital-card-icon">R</span>
             <b>Reports</b>
-            <small>Report section can be added later</small>
-          </div>
+            <small>Add and manage patient test reports</small>
+          </button>
         </section>
       </section>
     </main>
