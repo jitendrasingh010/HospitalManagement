@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useTheme from '../customhook/useTheme'
+import AdminSidebar from './AdminSidebar'
 
 const API_URL = 'http://localhost:5000'
 
 const Home = () => {
   const usenavigate = useNavigate()
-  const { theme, toggleTheme } = useTheme()
   const [counts, setCounts] = useState({ states: 0, districts: 0, cities: 0, hospitals: 0 })
   const [loading, setLoading] = useState(true)
 
@@ -54,46 +53,16 @@ const Home = () => {
     { title: 'Hospitals', icon: '+', count: counts.hospitals, path: '/showhospitals', text: 'Manage hospital records' },
   ]
 
-  const menuItems = [
-    { label: 'Dashboard', icon: '◆', path: '/home' },
-    { label: 'State', icon: '⌂', path: '/state' },
-    { label: 'District', icon: '▦', path: '/district' },
-    { label: 'City', icon: '⌾', path: '/city' },
-    { label: 'Hospitals', icon: '+', path: '/showhospitals' },
-    { label: 'Profile', icon: '●', path: '/profile' },
-  ]
-
   return (
-    <main className="dashboard-layout">
-      <aside className="sidebar">
-        <div>
-          <p className="eyebrow">Hospital</p>
-          <h2>Admin Panel</h2>
-        </div>
+    <main className="hospital-dash-layout">
+      <AdminSidebar />
 
-        <div className="theme-row">
-          <button className="theme-btn" onClick={toggleTheme} title="Change theme">
-            {theme === 'light' ? '☾' : '☀'}
-          </button>
-        </div>
-
-        <nav className="side-menu">
-          {menuItems.map((item) => (
-            <button key={item.path} onClick={() => usenavigate(item.path)}>
-              <span className="menu-icon">{item.icon}</span>
-              <span>{item.label}</span>
-            </button>
-          ))}
-        </nav>
-      </aside>
-
-      <section className="dashboard-main">
+      <section className="hospital-main">
         <div className="dashboard-hero">
           <div>
             <p className="eyebrow">Hospital Management</p>
             <h1>Dashboard</h1>
           </div>
-          <button className="secondary-btn" onClick={() => usenavigate('/profile')}>Profile</button>
         </div>
 
         <section className="stats-grid">

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
+import AdminSidebar from './AdminSidebar'
 
 const API_URL = 'http://localhost:5000/hospital'
 
@@ -8,6 +9,8 @@ const UserProfile = () => {
   const navigate = useNavigate()
   const { theme, toggleTheme } = useTheme()
   const token = localStorage.getItem('token')
+  const loginUser = JSON.parse(localStorage.getItem('user') || '{}')
+  const isAdmin = loginUser.role === 'superadmin'
 
   const [user, setUser] = useState({})
   const [edit, setEdit] = useState(false)
@@ -165,7 +168,10 @@ const UserProfile = () => {
   }
 
   return (
-    <main className="page-shell">
+    <main className={isAdmin ? 'hospital-dash-layout' : 'page-shell'}>
+      {isAdmin && <AdminSidebar />}
+
+      <section className={isAdmin ? 'hospital-main' : 'page-content-full'}>
       <div className="page-header">
         <div>
           <p className="eyebrow">User</p>
@@ -174,10 +180,12 @@ const UserProfile = () => {
         </div>
 
         <div className="header-actions">
-          <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>
-          <button className="theme-btn" onClick={toggleTheme} title="Change theme">
-            {theme === 'light' ? '☾' : '☀'}
-          </button>
+          {!isAdmin && <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>}
+          {!isAdmin && (
+            <button className="theme-btn" onClick={toggleTheme} title="Change theme">
+              {theme === 'light' ? '☾' : '☀'}
+            </button>
+          )}
           <button className="secondary-btn" onClick={() => setEdit(true)}>Edit</button>
           <button className="secondary-btn" onClick={() => setPasswordBox(true)}>Reset Password</button>
           <button className="danger-btn" onClick={logout}>Logout</button>
@@ -251,6 +259,7 @@ const UserProfile = () => {
           {message && <p className="message profile-message">{message}</p>}
         </section>
       )}
+      </section>
     </main>
   )
 }

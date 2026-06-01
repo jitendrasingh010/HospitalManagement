@@ -16,6 +16,7 @@ const Appointment = () => {
   const [sortBy, setSortBy] = useState('newest')
   const [showPopup, setShowPopup] = useState(false)
   const [selectedAppointment, setSelectedAppointment] = useState(null)
+  const [doctorVisits, setDoctorVisits] = useState([])
   const [medicines, setMedicines] = useState([])
   const [reports, setReports] = useState([])
   const [medicineLoading, setMedicineLoading] = useState(false)
@@ -59,10 +60,26 @@ const Appointment = () => {
     return new Date(date).toLocaleDateString()
   }
 
+  const getDoctorId = (appointment) => {
+    return appointment.doctorId?._id || appointment.doctorId
+  }
+
+  const openVisitDates = (appointment) => {
+    const doctorId = getDoctorId(appointment)
+    const visits = appointments
+      .filter((item) => getDoctorId(item) === doctorId)
+      .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
+
+    setDoctorVisits(visits)
+    setSelectedAppointment(null)
+    setMedicines([])
+    setReports([])
+    setShowPopup(true)
+  }
+
   const viewMedicine = async (appointment) => {
     try {
       setSelectedAppointment(appointment)
-      setShowPopup(true)
       setMedicineLoading(true)
       setMedicines([])
       setReports([])
@@ -104,6 +121,7 @@ const Appointment = () => {
   const closePopup = () => {
     setShowPopup(false)
     setSelectedAppointment(null)
+    setDoctorVisits([])
     setMedicines([])
     setReports([])
   }
@@ -147,6 +165,17 @@ const Appointment = () => {
       return new Date(b.date || 0) - new Date(a.date || 0)
     })
 
+  const uniqueAppointments = []
+  filteredAppointments.forEach((item) => {
+    const alreadyAdded = uniqueAppointments.some((appointment) => (
+      getDoctorId(appointment) === getDoctorId(item)
+    ))
+
+    if (!alreadyAdded) {
+      uniqueAppointments.push(item)
+    }
+  })
+
   return (
     <main className="page-shell">
       <div className="page-header">
@@ -189,17 +218,17 @@ const Appointment = () => {
         </div>
       )}
 
-      {!loading && filteredAppointments.length === 0 && (
+      {!loading && uniqueAppointments.length === 0 && (
         <div className="empty-state">
           <h2>No appointment found</h2>
           <p className="muted">Book appointment or change search text.</p>
         </div>
       )}
 
-      {!loading && filteredAppointments.length > 0 && (
+      {!loading && uniqueAppointments.length > 0 && (
         <div className="hospital-grid">
-          {filteredAppointments.map((item) => (
-            <article className="hospital-card" key={item._id}>
+          {uniqueAppointments.map((item) => (
+            <article className="hospital-card" key={getDoctorId(item)}>
               <div className="hospital-card-top">
                 <div>
                   <span className="status-pill">Booked</span>
@@ -210,13 +239,13 @@ const Appointment = () => {
               <div className="hospital-info-grid">
                 <span><b>Hospital</b>{item.hospitalId?.name || '-'}</span>
                 <span><b>Specialization</b>{item.doctorId?.specialization || '-'}</span>
-                <span><b>Date</b>{getDate(item.date)}</span>
-                <span><b>Time</b>{item.time || '-'}</span>
+                <span><b>Last Visit</b>{getDate(item.date)}</span>
+                <span><b>Total Visits</b>{appointments.filter((visit) => getDoctorId(visit) === getDoctorId(item)).length}</span>
                 <span><b>Fees</b>Rs. {item.doctorId?.fees || 0}</span>
                 <span><b>Contact</b>{item.hospitalId?.contact || '-'}</span>
               </div>
 
-              <button className="view-btn approve-btn" onClick={() => viewMedicine(item)}>
+              <button className="view-btn approve-btn" onClick={() => openVisitDates(item)}>
                 View
               </button>
             </article>
@@ -229,27 +258,43 @@ const Appointment = () => {
           <section className="public-popup">
             <div className="popup-head">
               <div>
-                <h2>Medicine Details</h2>
-                <p className="muted">Dr. {selectedAppointment?.doctorId?.name || 'Doctor'} prescription</p>
+                <h2>Visit Dates</h2>
+                <p className="muted">
+                  Dr. {doctorVisits[0]?.doctorId?.name || 'Doctor'} visits
+                </p>
               </div>
               <button className="close-btn" onClick={closePopup} type="button">×</button>
             </div>
 
+            <div className="hospital-grid">
+              {doctorVisits.map((visit) => (
+                <article className="hospital-card" key={visit._id}>
+                  <div className="hospital-info-grid">
+                    <span><b>Time</b>{visit.time || '-'}</span>
+                    <span><b>Hospital</b>{visit.hospitalId?.name || '-'}</span>
+                  </div>
+                  <button className="view-btn approve-btn" onClick={() => viewMedicine(visit)}>
+                    {getDate(visit.date)}
+                  </button>
+                </article>
+              ))}
+            </div>
+
             {medicineLoading && (
               <div className="empty-state">
-                <h2>Loading medicines...</h2>
+                <h2>Loading details...</h2>
                 <p className="muted">Please wait.</p>
               </div>
             )}
 
-            {!medicineLoading && medicines.length === 0 && (
+            {!medicineLoading && selectedAppointment && medicines.length === 0 && reports.length === 0 && (
               <div className="empty-state">
-                <h2>No medicine added</h2>
-                <p className="muted">Doctor has not added medicine for this appointment.</p>
+                <h2>No details added</h2>
+                <p className="muted">Doctor has not added medicine or report for this visit.</p>
               </div>
             )}
 
-            {!medicineLoading && medicines.length > 0 && (
+            {!medicineLoading && selectedAppointment && medicines.length > 0 && (
               <div className="hospital-grid">
                 {medicines.map((medicine) => {
                   const report = getReportForMedicine(medicine._id)
@@ -294,6 +339,35 @@ const Appointment = () => {
                     </article>
                   )
                 })}
+              </div>
+            )}
+
+            {!medicineLoading && selectedAppointment && medicines.length === 0 && reports.length > 0 && (
+              <div className="hospital-grid">
+                {reports.map((report) => (
+                  <article className="hospital-card" key={report._id}>
+                    <div className="hospital-card-top">
+                      <div>
+                        <span className="status-pill">Report Ready</span>
+                        <h2>{report.testId?.name || 'Test Report'}</h2>
+                      </div>
+                    </div>
+
+                    <div className="hospital-info-grid">
+                      <span><b>Test Price</b>Rs. {report.testId?.price || 0}</span>
+                      <span><b>Result</b>{report.result || '-'}</span>
+                      <span><b>Normal Range</b>{report.normalRange || '-'}</span>
+                      <span><b>Remark</b>{report.remark || '-'}</span>
+                      <span><b>Report Date</b>{getDate(report.createdAt)}</span>
+                    </div>
+
+                    {report.image && (
+                      <div className="doctor-image-preview">
+                        <img src={report.image} alt="Report" />
+                      </div>
+                    )}
+                  </article>
+                ))}
               </div>
             )}
           </section>

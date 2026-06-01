@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
+import HospitalSidebar from './HospitalSidebar'
 
 const API_URL = 'http://localhost:5000/hospital'
 
@@ -147,7 +148,10 @@ const DepartmentProfile = () => {
   }
 
   return (
-    <main className="page-shell">
+    <main className="hospital-dash-layout">
+      <HospitalSidebar />
+
+      <section className="hospital-main">
       <div className="page-header">
         <div>
           <p className="eyebrow">Hospital</p>
@@ -155,7 +159,6 @@ const DepartmentProfile = () => {
           <p className="muted">Hospital account details</p>
         </div>
         <div className="header-actions">
-          <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>
           <button className="secondary-btn" onClick={() => setEdit(true)}>Edit</button>
           <button className="secondary-btn" onClick={() => setPasswordBox(true)}>Reset Password</button>
           <button className="secondary-btn" onClick={toggleTheme}>{theme === 'light' ? 'Dark' : 'Light'}</button>
@@ -218,6 +221,7 @@ const DepartmentProfile = () => {
         )}
 
         {message && <p className="message profile-message">{message}</p>}
+      </section>
       </section>
     </main>
   )

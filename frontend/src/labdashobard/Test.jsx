@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
+import HospitalSidebar from '../hospitalDashboard/HospitalSidebar'
 
 const API_URL = 'http://localhost:5000/test'
 const LAB_URL = 'http://localhost:5000/lab'
@@ -216,7 +217,10 @@ const Test = () => {
     })
 
   return (
-    <main className="page-shell">
+    <main className={isHospital ? 'hospital-dash-layout' : 'page-shell'}>
+      {isHospital && <HospitalSidebar />}
+
+      <section className={isHospital ? 'hospital-main' : 'page-content-full'}>
       <div className="page-header">
         <div>
           <p className="eyebrow">Lab</p>
@@ -237,7 +241,7 @@ const Test = () => {
           >
             Inactive
           </button>
-          <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>
+          {!isHospital && <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>}
           <button className="secondary-btn" onClick={toggleTheme}>
             {theme === 'light' ? 'Dark' : 'Light'}
           </button>
@@ -349,6 +353,7 @@ const Test = () => {
           <p className="muted">No {statusFilter} test found.</p>
         </div>
       )}
+      </section>
     </main>
   )
 }

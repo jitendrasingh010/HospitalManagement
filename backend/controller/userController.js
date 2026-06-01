@@ -19,7 +19,7 @@ exports.signUp = async (req, res) => {
         const user = new User({ ...data, password: hashedPassword });
         await user.save();
         res.status(201).json({ message: 'User added successfully' });
-    } catch (error) {
+doct    } catch (error) {
         console.error('Error adding user:', error);
         res.status(500).json({ message: 'Internal server error' });
     }

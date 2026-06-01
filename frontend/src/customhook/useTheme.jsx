@@ -1,21 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
+
+const getSavedTheme = () => {
+  return localStorage.getItem('theme') || 'light'
+}
 
 const useTheme = () => {
-  const [theme, setTheme] = useState(
-    localStorage.getItem("theme") || "light"
-  );
+  const [theme, setTheme] = useState(getSavedTheme)
 
   useEffect(() => {
-    document.body.className = theme;
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+    document.body.classList.remove('light', 'dark')
+    document.body.classList.add(theme)
+    localStorage.setItem('theme', theme)
+  }, [theme])
 
   const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
+    setTheme(theme === 'light' ? 'dark' : 'light')
+  }
 
-  return { theme, toggleTheme };
-};
+  return { theme, toggleTheme }
+}
 
-export { useTheme };
-export default useTheme;
+export { useTheme }
+export default useTheme

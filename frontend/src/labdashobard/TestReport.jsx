@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
+import HospitalSidebar from '../hospitalDashboard/HospitalSidebar'
 
 const API_URL = 'http://localhost:5000/testReport'
 
@@ -23,6 +24,9 @@ const TestReport = () => {
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [sortBy, setSortBy] = useState('newest')
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const isHospital = user.role === 'hospital'
 
   const getToken = () => localStorage.getItem('token')
 
@@ -192,23 +196,72 @@ const TestReport = () => {
   }
 
   const searchText = search.toLowerCase().trim()
-  const filteredReports = reports.filter((item) => {
-    if (!searchText) return true
+  const filteredPendingTests = pendingTests
+    .filter((item) => {
+      if (!searchText) return true
 
-    const reportText = [
-      item.patientId?.name,
-      item.patientId?.phone,
-      item.testId?.name,
-      item.result,
-      item.doctorId?.name,
-      getDate(item.createdAt),
-    ].join(' ').toLowerCase()
+      const pendingText = [
+        item.patientId?.name,
+        item.patientId?.phone,
+        item.test?.name,
+        item.test?.labId?.name,
+        item.doctorId?.name,
+      ].join(' ').toLowerCase()
 
-    return reportText.includes(searchText)
-  })
+      return pendingText.includes(searchText)
+    })
+    .sort((a, b) => {
+      if (sortBy === 'patient') {
+        return (a.patientId?.name || '').localeCompare(b.patientId?.name || '')
+      }
+
+      if (sortBy === 'test') {
+        return (a.test?.name || '').localeCompare(b.test?.name || '')
+      }
+
+      return 0
+    })
+
+  const filteredReports = reports
+    .filter((item) => {
+      if (!searchText) return true
+
+      const reportText = [
+        item.patientId?.name,
+        item.patientId?.phone,
+        item.testId?.name,
+        item.result,
+        item.doctorId?.name,
+        getDate(item.createdAt),
+      ].join(' ').toLowerCase()
+
+      return reportText.includes(searchText)
+    })
+    .sort((a, b) => {
+      if (sortBy === 'patient') {
+        return (a.patientId?.name || '').localeCompare(b.patientId?.name || '')
+      }
+
+      if (sortBy === 'test') {
+        return (a.testId?.name || '').localeCompare(b.testId?.name || '')
+      }
+
+      if (sortBy === 'doctor') {
+        return (a.doctorId?.name || '').localeCompare(b.doctorId?.name || '')
+      }
+
+      if (sortBy === 'oldest') {
+        return new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
+      }
+
+      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+    })
 
   return (
-    <main className="page-shell">
+    <main className={isHospital ? 'hospital-dash-layout' : 'page-shell'}>
+      {isHospital && <HospitalSidebar />}
+
+      <section className={isHospital ? 'hospital-main' : 'page-content-full'}>
       <div className="page-header">
         <div>
           <p className="eyebrow">Lab</p>
@@ -216,7 +269,7 @@ const TestReport = () => {
           <p className="muted">Add patient test result and manage reports.</p>
         </div>
         <div className="header-actions">
-          <button className="secondary-btn" onClick={() => navigate('/labdashboard')}>Back</button>
+          {!isHospital && <button className="secondary-btn" onClick={() => navigate('/labdashboard')}>Back</button>}
           <button className="secondary-btn" onClick={toggleTheme}>
             {theme === 'light' ? 'Dark' : 'Light'}
           </button>
@@ -232,6 +285,13 @@ const TestReport = () => {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
+        <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="patient">Patient name</option>
+          <option value="test">Test name</option>
+          <option value="doctor">Doctor name</option>
+        </select>
       </section>
 
       <section className="page-header">
@@ -241,16 +301,16 @@ const TestReport = () => {
         </div>
       </section>
 
-      {pendingTests.length === 0 && (
+      {filteredPendingTests.length === 0 && (
         <div className="empty-state">
           <h2>No pending test</h2>
           <p className="muted">All requested tests have report.</p>
         </div>
       )}
 
-      {pendingTests.length > 0 && (
+      {filteredPendingTests.length > 0 && (
         <div className="hospital-grid">
-          {pendingTests.map((item) => (
+          {filteredPendingTests.map((item) => (
             <article className="hospital-card" key={item._id}>
               <div className="hospital-card-top">
                 <div>
@@ -389,6 +449,7 @@ const TestReport = () => {
           <p className="muted">No completed test report found.</p>
         </div>
       )}
+      </section>
     </main>
   )
 }

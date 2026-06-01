@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import useTheme from '../customhook/useTheme'
+import AdminSidebar from './AdminSidebar'
 
 const API_URL = 'http://localhost:5000'
 
 const District = () => {
-  const navigate = useNavigate()
-  const { theme, toggleTheme } = useTheme()
   const [districts, setDistricts] = useState([])
   const [states, setStates] = useState([])
   const [form, setForm] = useState({ district: '', state: '' })
@@ -127,17 +124,14 @@ const District = () => {
     })
 
   return (
-    <main className="page-shell">
+    <main className="hospital-dash-layout">
+      <AdminSidebar />
+
+      <section className="hospital-main">
       <div className="page-header">
         <div>
           <p className="eyebrow">Master</p>
           <h1>District</h1>
-        </div>
-        <div className="header-actions">
-          <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>
-          <button className="theme-btn" onClick={toggleTheme} title="Change theme">
-            {theme === 'light' ? '☾' : '☀'}
-          </button>
         </div>
       </div>
 
@@ -214,6 +208,7 @@ const District = () => {
           <p className="muted">Add a district or change search text.</p>
         </div>
       )}
+      </section>
     </main>
   )
 }

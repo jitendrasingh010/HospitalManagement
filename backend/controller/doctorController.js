@@ -242,6 +242,35 @@ exports.updateDoctor = async (req, res) => {
     }
 };
 
+exports.changeDoctorPassword = async (req, res) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json({ message: 'Old password and new password are required' });
+        }
+
+        const user = await User.findById(req.user._id);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Old password is wrong' });
+        }
+
+        user.password = await bcrypt.hash(newPassword, 10);
+        await user.save();
+
+        res.status(200).json({ message: 'Password changed successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 exports.deleteDoctor = async (req, res) => {
     try {
         const { id } = req.params;

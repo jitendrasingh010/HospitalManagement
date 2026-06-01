@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
+import HospitalSidebar from './HospitalSidebar'
 
 const API_URL = 'http://localhost:5000/subdepartment'
 const DEPARTMENT_URL = 'http://localhost:5000/department'
@@ -223,7 +224,10 @@ const SubDepartment = () => {
   const activeDepartments = departments.filter((item) => (item.status || 'active') === 'active')
 
   return (
-    <main className="page-shell">
+    <main className="hospital-dash-layout">
+      <HospitalSidebar />
+
+      <section className="hospital-main">
       <div className="page-header">
         <div>
           <p className="eyebrow">Hospital</p>
@@ -245,7 +249,6 @@ const SubDepartment = () => {
           >
             Inactive
           </button>
-          <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>
           <button className="secondary-btn" onClick={toggleTheme}>{theme === 'light' ? 'Dark' : 'Light'}</button>
         </div>
       </div>
@@ -346,6 +349,7 @@ const SubDepartment = () => {
           <p className="muted">No {statusFilter} sub department found.</p>
         </div>
       )}
+      </section>
     </main>
   )
 }

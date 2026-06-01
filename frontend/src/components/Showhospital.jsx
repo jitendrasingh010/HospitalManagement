@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useTheme from '../customhook/useTheme'
+import AdminSidebar from './AdminSidebar'
 
 const API_URL = 'http://localhost:5000/hospitalmanagement'
 
 const Showhospital = () => {
   const navigate = useNavigate()
-  const { theme, toggleTheme } = useTheme()
   const [hospitals, setHospitals] = useState([])
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -162,18 +161,15 @@ const Showhospital = () => {
   }
 
   return (
-    <main className="page-shell">
+    <main className="hospital-dash-layout">
+      <AdminSidebar />
+
+      <section className="hospital-main">
       <div className="page-header">
         <div>
           <p className="eyebrow">Hospital</p>
           <h1>Show Hospitals</h1>
           <p className="muted">{loading ? 'Loading hospital records...' : `${filteredHospitals.length} hospital records found`}</p>
-        </div>
-        <div className="header-actions">
-          <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>
-          <button className="theme-btn" onClick={toggleTheme} title="Change theme">
-            {theme === 'light' ? '☾' : '☀'}
-          </button>
         </div>
       </div>
 
@@ -285,6 +281,7 @@ const Showhospital = () => {
           <p className="muted">Add a hospital record to see it here.</p>
         </div>
       )}
+      </section>
     </main>
   )
 }

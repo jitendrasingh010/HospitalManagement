@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import useTheme from '../customhook/useTheme'
+import AdminSidebar from './AdminSidebar'
 
 const API_URL = 'http://localhost:5000/state'
 
 const State = () => {
-  const navigate = useNavigate()
-  const { theme, toggleTheme } = useTheme()
   const [states, setStates] = useState([])
   const [state, setState] = useState('')
   const [country] = useState('India')
@@ -113,17 +110,14 @@ const State = () => {
     })
 
   return (
-    <main className="page-shell">
+    <main className="hospital-dash-layout">
+      <AdminSidebar />
+
+      <section className="hospital-main">
       <div className="page-header">
         <div>
           <p className="eyebrow">Master</p>
           <h1>State</h1>
-        </div>
-        <div className="header-actions">
-          <button className="secondary-btn" onClick={() => navigate(-1)}>Back</button>
-          <button className="theme-btn" onClick={toggleTheme} title="Change theme">
-            {theme === 'light' ? '☾' : '☀'}
-          </button>
         </div>
       </div>
 
@@ -194,6 +188,7 @@ const State = () => {
           <p className="muted">Add a state or change search text.</p>
         </div>
       )}
+      </section>
     </main>
   )
 }

@@ -1,22 +1,24 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useTheme from '../customhook/useTheme'
+import DoctorSidebar from './DoctorSidebar'
 
 const DOCTOR_URL = 'http://localhost:5000/doctor'
 const APPOINTMENT_URL = 'http://localhost:5000/appointment'
 
 const Doctordashboard = () => {
   const navigate = useNavigate()
-  const { theme, toggleTheme } = useTheme()
   const user = JSON.parse(localStorage.getItem('user') || '{}')
   const [doctor, setDoctor] = useState({})
   const [appointments, setAppointments] = useState([])
   const [message, setMessage] = useState('')
 
   const logout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    navigate('/')
+    const confirmed = window.confirm('Are you sure you want to logout?')
+    if (confirmed) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      navigate('/')
+    }
   }
 
   const loadDashboard = async () => {
@@ -54,28 +56,7 @@ const Doctordashboard = () => {
 
   return (
     <main className="hospital-dash-layout">
-      <aside className="hospital-sidebar">
-        <div>
-          <p className="eyebrow">Doctor</p>
-          <h2>Doctor Panel</h2>
-        </div>
-
-        <nav className="hospital-menu">
-          <button onClick={() => navigate('/doctordashboard')}>
-            <span>⌂</span>
-            Dashboard
-          </button>
-          <button onClick={() => navigate('/doctorappointment')}>
-            <span>▦</span>
-            Appointments
-          </button>
-          <button onClick={() => navigate('/doctorprofile')}>
-            <span>●</span>
-            Profile
-          </button>
-        </nav>
-      </aside>
-
+      <DoctorSidebar />
       <section className="hospital-main">
         <header className="hospital-topbar">
           <div>
@@ -83,13 +64,7 @@ const Doctordashboard = () => {
             <p className="muted">Welcome Dr. {doctor.name || user.name || 'Doctor'}.</p>
           </div>
 
-          <div className="header-actions">
-            <button className="theme-btn" onClick={toggleTheme} title="Change theme">
-              {theme === 'light' ? '☾' : '☀'}
-            </button>
-            <button className="secondary-btn" onClick={() => navigate('/doctorprofile')}>Profile</button>
-            <button className="danger-btn" onClick={logout}>Logout</button>
-          </div>
+          <button className="danger-btn" onClick={logout}>Logout</button>
         </header>
 
         {message && <p className="message">{message}</p>}

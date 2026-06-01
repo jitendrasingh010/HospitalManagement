@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useTheme from '../customhook/useTheme'
+import HospitalSidebar from './HospitalSidebar'
 
 const API_URL = 'http://localhost:5000/department'
 
 const HospitalDash = () => {
   const navigate = useNavigate()
-  const { theme, toggleTheme } = useTheme()
   const [showPopup, setShowPopup] = useState(false)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
@@ -59,44 +58,7 @@ const HospitalDash = () => {
 
   return (
     <main className="hospital-dash-layout">
-      <aside className="hospital-sidebar">
-        <div>
-          <p className="eyebrow">Hospital</p>
-          <h2>Hospital Panel</h2>
-        </div>
-
-        <nav className="hospital-menu">
-          <button onClick={() => navigate('/hospitaldashboard')}>
-            <span>⌂</span>
-            Dashboard
-          </button>
-          <button onClick={() => navigate('/departments')}>
-            <span>+</span>
-            Departments
-          </button>
-          <button onClick={() => navigate('/subdepartments')}>
-            <span>▦</span>
-            Sub Departments
-          </button>
-          <button onClick={() => navigate('/doctors')}>
-            <span>Dr</span>
-            Doctors
-          </button>
-          <button onClick={() => navigate('/hospitalprofile')}>
-            <span>●</span>
-            Profile
-          </button>
-          <button onClick={() => navigate('/addlab')}>
-            <span>●</span>
-            Add Lab
-          </button>
-          <button onClick={() => navigate('/test')}>
-            <span>T</span>
-            Tests
-          </button>
-          
-        </nav>
-      </aside>
+      <HospitalSidebar />
 
       <section className="hospital-main">
         <header className="hospital-topbar">
@@ -133,6 +95,11 @@ const HospitalDash = () => {
             <span className="hospital-card-icon">T</span>
             <b>Tests</b>
             <small>Add, edit, show and delete lab tests</small>
+          </button>
+          <button className="hospital-dash-card" onClick={() => navigate('/reports')}>
+            <span className="hospital-card-icon">R</span>
+            <b>Reports</b>
+            <small>View hospital statistics and download reports</small>
           </button>
         </section>
       </section>
