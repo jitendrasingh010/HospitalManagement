@@ -51,7 +51,6 @@ exports.updateDepartment = async (req, res) => {
       { name, description },
       { new: true }
     );
-
     if (!department) {
       return res.status(404).json({ message: 'Department not found' });
     }
@@ -87,7 +86,6 @@ exports.softDeleteDepartment = async (req, res) => {
       { status: 'inactive' },
       { new: true }
     );
-
     if (!department) {
       return res.status(404).json({ message: 'Department not found' });
     }

@@ -8,6 +8,7 @@ const DOCTOR_URL = 'http://localhost:5000/doctor'
 const LAB_URL = 'http://localhost:5000/lab'
 const TEST_URL = 'http://localhost:5000/test'
 const REPORT_URL = 'http://localhost:5000/testReport'
+const REPORTS_PER_PAGE = 8
 
 const Report = () => {
   const [departments, setDepartments] = useState([])
@@ -22,6 +23,7 @@ const Report = () => {
   const [toDate, setToDate] = useState('')
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
 
   const getToken = () => localStorage.getItem('token')
 
@@ -65,6 +67,10 @@ const Report = () => {
     getData()
   }, [])
 
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [search, sortBy, fromDate, toDate])
+
   const getActiveCount = (list) => {
     return list.filter((item) => (item.status || 'active') === 'active').length
   }
@@ -78,16 +84,19 @@ const Report = () => {
     return new Date(date).toLocaleDateString()
   }
 
+  const getFilterDate = (date) => {
+    if (!date) return ''
+    return new Date(date).toISOString().split('T')[0]
+  }
+
   const isDateMatch = (date) => {
     if (!fromDate && !toDate) return true
     if (!date) return false
 
-    const itemDate = new Date(date)
-    const startDate = fromDate ? new Date(fromDate) : null
-    const endDate = toDate ? new Date(toDate) : null
+    const itemDate = getFilterDate(date)
 
-    if (startDate && itemDate < startDate) return false
-    if (endDate && itemDate > endDate) return false
+    if (fromDate && itemDate < fromDate) return false
+    if (toDate && itemDate > toDate) return false
 
     return true
   }
@@ -102,6 +111,7 @@ const Report = () => {
         report.doctorId?.name,
         report.result,
         report.remark,
+        getDate(report.createdAt),
       ].join(' ').toLowerCase()
 
       const textMatch = !searchText || reportText.includes(searchText)
@@ -134,6 +144,7 @@ const Report = () => {
     setSortBy('newest')
     setFromDate('')
     setToDate('')
+    setCurrentPage(1)
   }
 
   const downloadPdf = (title, cards, rows = []) => {
@@ -199,6 +210,10 @@ const Report = () => {
     { label: 'Active Labs', value: getActiveCount(labs) },
     { label: 'Inactive Labs', value: getInactiveCount(labs) },
   ]
+
+  const totalPages = Math.ceil(filteredReports.length / REPORTS_PER_PAGE)
+  const startIndex = (currentPage - 1) * REPORTS_PER_PAGE
+  const showReports = filteredReports.slice(startIndex, startIndex + REPORTS_PER_PAGE)
 
   return (
     <main className="hospital-dash-layout">
@@ -326,13 +341,13 @@ const Report = () => {
                   <div>
                     <p className="eyebrow">Lab Reports</p>
                     <h2>Patient Test Reports</h2>
-                    <p className="muted">Reports filtered by search and date.</p>
+                    <p className="muted">Reports filtered by search and selected date.</p>
                   </div>
                   <button className="download-btn" onClick={() => downloadPdf('Patient Test Reports', [
                     { label: 'Total Reports', value: filteredReports.length },
                     { label: 'From Date', value: fromDate || '-' },
                     { label: 'To Date', value: toDate || '-' },
-                  ], filteredReports.map((report) => `${report.testId?.name || 'Test'} | ${report.patientId?.name || 'Patient'} | ${report.result || '-'} | ${getDate(report.createdAt)}`))}>↓</button>
+                  ], filteredReports.map((report) => `Date: ${getDate(report.createdAt)} | ${report.testId?.name || 'Test'} | ${report.patientId?.name || 'Patient'} | ${report.result || '-'}`))}>↓</button>
                 </div>
 
                 {filteredReports.length === 0 ? (
@@ -351,7 +366,7 @@ const Report = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredReports.map((report) => (
+                        {showReports.map((report) => (
                           <tr key={report._id}>
                             <td>{report.testId?.name || 'Test Report'}</td>
                             <td>{report.patientId?.name || '-'}</td>
@@ -363,6 +378,14 @@ const Report = () => {
                         ))}
                       </tbody>
                     </table>
+                  </div>
+                )}
+
+                {totalPages > 0 && (
+                  <div className="pagination">
+                    <button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>Prev</button>
+                    <span>Page {currentPage} of {totalPages}</span>
+                    <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
                   </div>
                 )}
               </article>

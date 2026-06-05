@@ -4,6 +4,7 @@ import DoctorSidebar from './DoctorSidebar'
 
 const APPOINTMENT_URL = 'http://localhost:5000/appointment'
 const REPORT_URL = 'http://localhost:5000/testReport'
+const REPORTS_PER_PAGE = 8
 
 const DoctorReport = () => {
   const [appointments, setAppointments] = useState([])
@@ -12,6 +13,7 @@ const DoctorReport = () => {
   const [sortBy, setSortBy] = useState('newest')
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
 
   const getDate = (date) => {
     if (!date) return '-'
@@ -82,6 +84,10 @@ const DoctorReport = () => {
     getData()
   }, [])
 
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [search, sortBy])
+
   const reachedPatients = appointments.filter((item) => item.isReached)
   const pendingPatients = appointments.filter((item) => !item.isReached)
   const searchText = search.toLowerCase().trim()
@@ -118,6 +124,10 @@ const DoctorReport = () => {
 
       return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
     })
+
+  const totalPages = Math.ceil(filteredReports.length / REPORTS_PER_PAGE)
+  const startIndex = (currentPage - 1) * REPORTS_PER_PAGE
+  const showReports = filteredReports.slice(startIndex, startIndex + REPORTS_PER_PAGE)
 
   return (
     <main className="hospital-dash-layout">
@@ -224,9 +234,9 @@ const DoctorReport = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredReports.map((item, index) => (
+                        {showReports.map((item, index) => (
                           <tr key={item._id}>
-                            <td>{index + 1}</td>
+                            <td>{startIndex + index + 1}</td>
                             <td>{item.patientId?.name || '-'}</td>
                             <td>{item.testId?.name || '-'}</td>
                             <td>{item.result || '-'}</td>
@@ -236,6 +246,14 @@ const DoctorReport = () => {
                         ))}
                       </tbody>
                     </table>
+                  </div>
+                )}
+
+                {totalPages > 0 && (
+                  <div className="pagination">
+                    <button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>Prev</button>
+                    <span>Page {currentPage} of {totalPages}</span>
+                    <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
                   </div>
                 )}
               </article>

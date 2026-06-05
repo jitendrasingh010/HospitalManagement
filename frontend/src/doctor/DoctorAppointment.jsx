@@ -19,6 +19,7 @@ const API_URL = 'http://localhost:5000/appointment'
 const MEDICINE_URL = 'http://localhost:5000/medicine'
 const TEST_URL = 'http://localhost:5000/test'
 const TEST_REPORT_URL = 'http://localhost:5000/testReport'
+const ITEMS_PER_PAGE = 6
 
 const emptyMedicineForm = {
   test: '',
@@ -44,6 +45,9 @@ const DoctorAppointment = () => {
   const [medicineForm, setMedicineForm] = useState(emptyMedicineForm)
   const [tests, setTests] = useState([])
   const [reports, setReports] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [visitPage, setVisitPage] = useState(1)
+  const [reportPage, setReportPage] = useState(1)
 
   const getAppointments = async () => {
     try {
@@ -114,6 +118,10 @@ const DoctorAppointment = () => {
     Promise.resolve().then(() => getAppointments())
   }, [])
 
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [search])
+
   const getDate = (date) => {
     if (!date) return '-'
     return new Date(date).toLocaleDateString()
@@ -133,6 +141,8 @@ const DoctorAppointment = () => {
     setSelectedAppointment(null)
     setMedicineForm(emptyMedicineForm)
     setReports([])
+    setVisitPage(1)
+    setReportPage(1)
     setShowPopup(true)
   }
 
@@ -140,6 +150,7 @@ const DoctorAppointment = () => {
     setSelectedAppointment(appointment)
     setMedicineForm(emptyMedicineForm)
     setReports([])
+    setReportPage(1)
     getTests()
     getReports(appointment._id)
     setShowPopup(true)
@@ -151,6 +162,8 @@ const DoctorAppointment = () => {
     setPatientVisits([])
     setMedicineForm(emptyMedicineForm)
     setReports([])
+    setVisitPage(1)
+    setReportPage(1)
   }
 
   const handleMedicineChange = (event) => {
@@ -234,6 +247,18 @@ const DoctorAppointment = () => {
     }
   })
 
+  const totalPages = Math.ceil(uniqueAppointments.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const showAppointments = uniqueAppointments.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+
+  const visitPages = Math.ceil(patientVisits.length / ITEMS_PER_PAGE)
+  const visitStart = (visitPage - 1) * ITEMS_PER_PAGE
+  const showVisits = patientVisits.slice(visitStart, visitStart + ITEMS_PER_PAGE)
+
+  const reportPages = Math.ceil(reports.length / ITEMS_PER_PAGE)
+  const reportStart = (reportPage - 1) * ITEMS_PER_PAGE
+  const showReports = reports.slice(reportStart, reportStart + ITEMS_PER_PAGE)
+
   return (
     <main className="hospital-dash-layout">
       <DoctorSidebar />
@@ -278,42 +303,52 @@ const DoctorAppointment = () => {
       )}
 
       {!loading && uniqueAppointments.length > 0 && (
-        <div className="hospital-grid">
-          {uniqueAppointments.map((item) => (
-            <Card component="article" className="hospital-card" key={getPatientId(item)}>
-              <CardContent>
-              <div className="hospital-card-top">
-                <div>
-                  <Chip
-                    color={item.isReached ? 'success' : 'primary'}
-                    label={item.isReached ? 'Reached' : 'Booked'}
-                    size="small"
-                  />
-                  <h2>{item.userId?.name || 'Patient'}</h2>
+        <>
+          <div className="hospital-grid">
+            {showAppointments.map((item) => (
+              <Card component="article" className="hospital-card" key={getPatientId(item)}>
+                <CardContent>
+                <div className="hospital-card-top">
+                  <div>
+                    <Chip
+                      color={item.isReached ? 'success' : 'primary'}
+                      label={item.isReached ? 'Reached' : 'Booked'}
+                      size="small"
+                    />
+                    <h2>{item.userId?.name || 'Patient'}</h2>
+                  </div>
                 </div>
-              </div>
 
-              <div className="hospital-info-grid">
-                <span><b>Email</b>{item.userId?.email || '-'}</span>
-                <span><b>Phone</b>{item.userId?.phone || '-'}</span>
-                <span><b>Age</b>{item.userId?.age || '-'}</span>
-                <span><b>Gender</b>{item.userId?.gender || '-'}</span>
-                <span><b>Last Visit</b>{getDate(item.date)}</span>
-                <span><b>Total Visits</b>{appointments.filter((visit) => getPatientId(visit) === getPatientId(item)).length}</span>
-              </div>
-              <Button
-                className="view-btn approve-btn"
-                onClick={() => openVisitDates(item)}
-                startIcon={<VisibilityIcon />}
-                variant="contained"
-              >
-                View
-              </Button>
-              </CardContent>
-            </Card>
+                <div className="hospital-info-grid">
+                  <span><b>Email</b>{item.userId?.email || '-'}</span>
+                  <span><b>Phone</b>{item.userId?.phone || '-'}</span>
+                  <span><b>Age</b>{item.userId?.age || '-'}</span>
+                  <span><b>Gender</b>{item.userId?.gender || '-'}</span>
+                  <span><b>Last Visit</b>{getDate(item.date)}</span>
+                  <span><b>Total Visits</b>{appointments.filter((visit) => getPatientId(visit) === getPatientId(item)).length}</span>
+                </div>
+                <Button
+                  className="view-btn approve-btn"
+                  onClick={() => openVisitDates(item)}
+                  startIcon={<VisibilityIcon />}
+                  variant="contained"
+                >
+                  View
+                </Button>
+                </CardContent>
+              </Card>
 
-          ))}
-        </div>
+            ))}
+          </div>
+
+          {totalPages > 0 && (
+            <div className="pagination">
+              <button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>Prev</button>
+              <span>Page {currentPage} of {totalPages}</span>
+              <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+            </div>
+          )}
+        </>
       )}
 
       {showPopup && (
@@ -330,7 +365,7 @@ const DoctorAppointment = () => {
             </div>
 
             <div className="hospital-grid">
-              {patientVisits.map((visit) => (
+              {showVisits.map((visit) => (
                 <Card component="article" className="hospital-card" key={visit._id}>
                   <CardContent>
                   <div className="hospital-info-grid">
@@ -350,6 +385,14 @@ const DoctorAppointment = () => {
                 </Card>
               ))}
             </div>
+
+            {visitPages > 0 && (
+              <div className="pagination">
+                <button disabled={visitPage === 1} onClick={() => setVisitPage(visitPage - 1)}>Prev</button>
+                <span>Page {visitPage} of {visitPages}</span>
+                <button disabled={visitPage === visitPages} onClick={() => setVisitPage(visitPage + 1)}>Next</button>
+              </div>
+            )}
 
             {selectedAppointment && !selectedAppointment.isReached && (
               <form className="doctor-form" onSubmit={saveMedicine}>
@@ -431,7 +474,7 @@ const DoctorAppointment = () => {
 
             {reports.length > 0 && (
               <div className="hospital-grid">
-                {reports.map((report) => (
+                {showReports.map((report) => (
                   <Card component="article" className="hospital-card" key={report._id}>
                     <CardContent>
                     <div className="hospital-card-top">
@@ -455,6 +498,14 @@ const DoctorAppointment = () => {
                     </CardContent>
                   </Card>
                 ))}
+              </div>
+            )}
+
+            {reportPages > 0 && (
+              <div className="pagination">
+                <button disabled={reportPage === 1} onClick={() => setReportPage(reportPage - 1)}>Prev</button>
+                <span>Page {reportPage} of {reportPages}</span>
+                <button disabled={reportPage === reportPages} onClick={() => setReportPage(reportPage + 1)}>Next</button>
               </div>
             )}
 

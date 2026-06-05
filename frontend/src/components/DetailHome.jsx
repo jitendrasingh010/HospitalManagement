@@ -103,6 +103,20 @@ const DetailHome = () => {
     setAppointmentMessage('')
   }
 
+  const openDoctorAppointment = (doctor) => {
+    setSelectedDoctor(doctor)
+    setAppointmentMessage('')
+
+    const token = localStorage.getItem('token')
+    if (!token) {
+      alert('Please login to book an appointment')
+      navigate('/login')
+      return
+    }
+
+    setShowAppointment(true)
+  }
+
   const openAppointment = () => {
     const token = localStorage.getItem('token')
     if (!token) {
@@ -174,13 +188,57 @@ const DetailHome = () => {
     return ''
   }
 
+  const getRatingText = (rating) => {
+    const ratingValue = Number(rating || 4.5)
+    const safeRating = Number.isFinite(ratingValue) ? ratingValue.toFixed(1) : '4.5'
+    const starCount = Math.max(1, Math.min(5, Math.round(Number(safeRating))))
+
+    return {
+      value: safeRating,
+      stars: '★★★★★'.slice(0, starCount),
+    }
+  }
+
   const getDepartmentText = (hospital) => {
     const departments = hospital.departments?.map((item) => item.name) || []
     const subDepartmentNames = hospital.subDepartments?.map((item) => item.name) || []
     return [...departments, ...subDepartmentNames].join(' ')
   }
 
+  const getDoctorDepartment = (doctor) => (
+    doctor.subDepartmentId?.departmentId?.name || 'Department not assigned'
+  )
+
+  const getDoctorSubDepartment = (doctor) => (
+    doctor.subDepartmentId?.name || 'Sub department not assigned'
+  )
+
+  const getAvailabilityText = (doctor) => {
+    const days = doctor.availableDays?.length ? doctor.availableDays.join(', ') : 'Days not set'
+    const start = doctor.availableTime?.start
+    const end = doctor.availableTime?.end
+
+    if (start && end) {
+      return `${days} | ${start} - ${end}`
+    }
+
+    return days
+  }
+
   const searchText = search.toLowerCase().trim()
+  const hasSearch = searchText.length > 0
+  const isLoggedIn = Boolean(localStorage.getItem('token'))
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}')
+  const dashboardPath = currentUser.role === 'hospital'
+    ? '/hospitaldashboard'
+    : currentUser.role === 'doctor'
+      ? '/doctordashboard'
+      : currentUser.role === 'lab'
+        ? '/labdashboard'
+        : currentUser.role === 'user'
+          ? '/userdashboard'
+          : '/home'
+  const emergencyHospitalCount = hospitals.filter((hospital) => hospital.emergencyAvailable).length
 
   const filteredHospitals = hospitals.filter((hospital) => {
     if (!searchText) {
@@ -205,6 +263,8 @@ const DetailHome = () => {
     const doctorText = [
       doctor.name,
       doctor.specialization,
+      doctor.qualification,
+      doctor.phone,
       doctor.hospital?.name,
       doctor.subDepartmentId?.name,
       doctor.subDepartmentId?.departmentId?.name
@@ -212,6 +272,12 @@ const DetailHome = () => {
 
     return doctorText.includes(searchText)
   })
+
+  const showHospitalResults = viewMode === 'hospital' || hasSearch
+  const showDoctorResults = viewMode === 'doctor' || hasSearch
+  const sectionHeading = hasSearch
+    ? 'Search Results'
+    : viewMode === 'hospital' ? 'Hospitals' : 'Doctors'
 
   return (
     <main className="public-page">
@@ -231,9 +297,15 @@ const DetailHome = () => {
           <button className="theme-btn" onClick={toggleTheme} title="Change theme">
             {theme === 'light' ? '☾' : '☀'}
           </button>
-          <button className="public-login-btn" onClick={() => navigate('/login')}>
-            Login
-          </button>
+          {isLoggedIn ? (
+            <button className="public-login-btn" onClick={() => navigate(dashboardPath)}>
+              Dashboard
+            </button>
+          ) : (
+            <button className="public-login-btn" onClick={() => navigate('/login')}>
+              Login
+            </button>
+          )}
         </div>
       </header>
 
@@ -263,12 +335,12 @@ const DetailHome = () => {
           <span>Approved Hospitals</span>
         </div>
         <div>
-          <strong>Easy</strong>
-          <span>Doctor View</span>
+          <strong>{allDoctors.length}</strong>
+          <span>Available Doctors</span>
         </div>
         <div>
-          <strong>Fast</strong>
-          <span>Department Details</span>
+          <strong>{emergencyHospitalCount}</strong>
+          <span>Emergency Hospitals</span>
         </div>
       </section>
 
@@ -276,7 +348,7 @@ const DetailHome = () => {
         <div className="section-title">
           <div>
             <p className="eyebrow">Available Hospitals</p>
-            <h2>{viewMode === 'hospital' ? 'Hospitals' : 'Doctors'}</h2>
+            <h2>{sectionHeading}</h2>
           </div>
           <button className="secondary-btn" onClick={getHospitals}>Refresh</button>
         </div>
@@ -313,16 +385,26 @@ const DetailHome = () => {
           </div>
         )}
 
-        {!loading && viewMode === 'hospital' && filteredHospitals.length === 0 && (
+        {!loading && hasSearch && filteredHospitals.length === 0 && filteredDoctors.length === 0 && (
+          <div className="empty-state">
+            <h2>No result found</h2>
+            <p className="muted">Search text change karke try karein.</p>
+          </div>
+        )}
+
+        {!loading && !hasSearch && viewMode === 'hospital' && filteredHospitals.length === 0 && (
           <div className="empty-state">
             <h2>No approved hospital found</h2>
             <p className="muted">Admin approve karega tab hospital yaha show hoga.</p>
           </div>
         )}
 
-        {viewMode === 'hospital' && (
+        {showHospitalResults && filteredHospitals.length > 0 && (
           <div className="public-hospital-grid">
-          {filteredHospitals.map((hospital) => (
+          {filteredHospitals.map((hospital) => {
+            const rating = getRatingText(hospital.rating)
+
+            return (
             <article className="public-hospital-card" key={hospital._id}>
               {getHospitalImage(hospital) ? (
                 <img src={getHospitalImage(hospital)} alt={hospital.name} />
@@ -333,7 +415,10 @@ const DetailHome = () => {
               <div className="public-card-body">
                 <div className="hospital-card-title">
                   <span className="status-pill">Approved</span>
-                  <span>{hospital.rating || '4.5'} Star</span>
+                  <span className="rating-pill">
+                    <span>{rating.stars}</span>
+                    <b>{rating.value}</b>
+                  </span>
                 </div>
                 <h3>{hospital.name}</h3>
                 <p>{getAddressText(hospital.address)}</p>
@@ -354,37 +439,64 @@ const DetailHome = () => {
                 </button>
               </div>
             </article>
-          ))}
+            )
+          })}
           </div>
         )}
 
-        {!loading && viewMode === 'doctor' && filteredDoctors.length === 0 && (
+        {!loading && !hasSearch && viewMode === 'doctor' && filteredDoctors.length === 0 && (
           <div className="empty-state">
             <h2>No doctor found</h2>
             <p className="muted">Doctor add hoga tab yaha show hoga.</p>
           </div>
         )}
 
-        {viewMode === 'doctor' && (
+        {showDoctorResults && filteredDoctors.length > 0 && (
           <div className="public-doctor-grid">
             {filteredDoctors.map((doctor) => (
               <article className="public-doctor-card" key={doctor._id}>
-                <div className="doctor-avatar large-avatar">
-                  {doctor.image ? <img src={doctor.image} alt={doctor.name} /> : doctor.name?.charAt(0)}
+                <div className="doctor-card-head">
+                  <div className="doctor-avatar large-avatar">
+                    {doctor.image ? <img src={doctor.image} alt={doctor.name} /> : doctor.name?.charAt(0)}
+                  </div>
+                  <div>
+                    <span className={doctor.isAvailable ? 'status-pill' : 'status-pill doctor-unavailable'}>
+                      {doctor.isAvailable ? 'Available' : 'Unavailable'}
+                    </span>
+                    <h3>Dr. {doctor.name}</h3>
+                    <p>{doctor.hospital?.name || 'Hospital name'}</p>
+                  </div>
                 </div>
-                <div>
-                  <span className="status-pill">Doctor</span>
-                  <h3>Dr. {doctor.name}</h3>
-                  <p>{doctor.hospital?.name || 'Hospital name'}</p>
+
+                <div className="doctor-meta-row">
+                  <span>{doctor.specialization || 'Specialist'}</span>
+                  <span>{doctor.qualification || 'Qualification not added'}</span>
                 </div>
+
                 <div className="doctor-card-info">
-                  <span><b>{doctor.experience || 0}</b>Experience</span>
-                  <span><b>Rs. {doctor.fees || 0}</b>Fees</span>
-                  <span><b>{doctor.specialization || '-'}</b>Specialization</span>
+                  <span><b>{doctor.experience || 0} yrs</b>Experience</span>
+                  <span><b>Rs. {doctor.fees || 0}</b>Consultation Fees</span>
+                  <span><b>{getDoctorDepartment(doctor)}</b>Department</span>
+                  <span><b>{getDoctorSubDepartment(doctor)}</b>Sub Department</span>
+                  <span><b>{doctor.phone || '-'}</b>Contact</span>
+                  <span><b>{doctor.gender || '-'}{doctor.age ? `, ${doctor.age} yrs` : ''}</b>Profile</span>
                 </div>
-                <button className="view-btn" onClick={() => openDoctor(doctor)}>
-                  View Doctor
-                </button>
+
+                <div className="doctor-availability">
+                  <b>Availability</b>
+                  <span>{getAvailabilityText(doctor)}</span>
+                </div>
+
+                {doctor.about && <p className="doctor-card-about">{doctor.about}</p>}
+
+                <div className="doctor-card-actions">
+                  <button className="secondary-btn" onClick={() => openDoctor(doctor)}>
+                    View Details
+                  </button>
+                  <button className="view-btn" onClick={() => openDoctorAppointment(doctor)}>
+                    Book Appointment
+                  </button>
+                </div>
               </article>
             ))}
           </div>
@@ -403,7 +515,7 @@ const DetailHome = () => {
         </div>
         <div>
           <b>Quick Links</b>
-          <button onClick={() => navigate('/login')}>Login</button>
+          {!isLoggedIn && <button onClick={() => navigate('/login')}>Login</button>}
           <button onClick={() => navigate('/addhospital')}>Register Hospital</button>
         </div>
       </footer>
@@ -495,7 +607,18 @@ const DetailHome = () => {
               <span><b>Fees</b>Rs. {selectedDoctor.fees || 0}</span>
               <span><b>Department</b>{selectedDoctor.subDepartmentId?.departmentId?.name || '-'}</span>
               <span><b>Sub Department</b>{selectedDoctor.subDepartmentId?.name || '-'}</span>
+              <span><b>Qualification</b>{selectedDoctor.qualification || '-'}</span>
+              <span><b>Contact</b>{selectedDoctor.phone || '-'}</span>
+              <span><b>Gender / Age</b>{selectedDoctor.gender || '-'}{selectedDoctor.age ? `, ${selectedDoctor.age} years` : ''}</span>
+              <span><b>Available Time</b>{getAvailabilityText(selectedDoctor)}</span>
             </div>
+
+            {selectedDoctor.about && (
+              <div className="doctor-about-box">
+                <h3>About Doctor</h3>
+                <p>{selectedDoctor.about}</p>
+              </div>
+            )}
 
             <button className="view-btn appointment-open-btn" onClick={openAppointment}>
               Book Appointment

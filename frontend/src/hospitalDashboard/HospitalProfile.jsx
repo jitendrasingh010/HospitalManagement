@@ -184,7 +184,6 @@ const DepartmentProfile = () => {
             <div className="profile-info"><span>Phone</span><strong>{user.phone || '-'}</strong></div>
             <div className="profile-info"><span>Age</span><strong>{user.age || '-'}</strong></div>
             <div className="profile-info"><span>Gender</span><strong>{user.gender || '-'}</strong></div>
-            <div className="profile-info"><span>Blood Group</span><strong>{user.BG || '-'}</strong></div>
           </div>
         )}
 
