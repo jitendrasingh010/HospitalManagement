@@ -13,3 +13,6 @@ router.put('/reject/:id',auth,hospitalController.rejectHospital);
 router.put('/update/:id',auth,hospitalController.updateHospital);
 router.delete('/delete/:id',auth,hospitalController.deleteHospital);
 module.exports = router;
+
+
+
