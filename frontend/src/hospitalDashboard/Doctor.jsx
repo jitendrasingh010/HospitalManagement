@@ -1,11 +1,12 @@
+import { BASE_URL } from '../config';
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
 import HospitalSidebar from './HospitalSidebar'
 
-const API_URL = 'http://localhost:5000/doctor'
-const DEPARTMENT_URL = 'http://localhost:5000/department'
-const SUB_DEPARTMENT_URL = 'http://localhost:5000/subdepartment'
+const API_URL = `${BASE_URL}/doctor`
+const DEPARTMENT_URL = `${BASE_URL}/department`
+const SUB_DEPARTMENT_URL = `${BASE_URL}/subdepartment`
 
 const emptyForm = {
   name: '',

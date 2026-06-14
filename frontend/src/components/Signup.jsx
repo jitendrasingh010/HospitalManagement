@@ -1,3 +1,4 @@
+import { BASE_URL } from '../config';
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
@@ -36,7 +37,7 @@ const Signup = () => {
     try {
       setLoading(true)
 
-      const response = await fetch('http://localhost:5000/hospital/signup', {
+      const response = await fetch(`${BASE_URL}/hospital/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

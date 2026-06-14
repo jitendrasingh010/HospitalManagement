@@ -1,9 +1,10 @@
+import { BASE_URL } from '../config';
 import React, { useEffect, useState } from 'react'
 import { jsPDF } from 'jspdf'
 import DoctorSidebar from './DoctorSidebar'
 
-const APPOINTMENT_URL = 'http://localhost:5000/appointment'
-const REPORT_URL = 'http://localhost:5000/testReport'
+const APPOINTMENT_URL = `${BASE_URL}/appointment`
+const REPORT_URL = `${BASE_URL}/testReport`
 const REPORTS_PER_PAGE = 8
 
 const DoctorReport = () => {

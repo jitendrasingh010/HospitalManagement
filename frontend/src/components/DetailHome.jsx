@@ -1,9 +1,10 @@
+import { BASE_URL } from '../config';
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
 
-const API_URL = 'http://localhost:5000/hospitalmanagement'
-const APPOINTMENT_URL = 'http://localhost:5000/appointment'
+const API_URL = `${BASE_URL}/hospitalmanagement`
+const APPOINTMENT_URL = `${BASE_URL}/appointment`
 
 const DetailHome = () => {
   const navigate = useNavigate()

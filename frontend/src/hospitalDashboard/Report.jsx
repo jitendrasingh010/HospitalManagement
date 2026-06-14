@@ -1,13 +1,14 @@
+import { BASE_URL } from '../config';
 import React, { useEffect, useState } from 'react'
 import { jsPDF } from 'jspdf'
 import HospitalSidebar from './HospitalSidebar'
 
-const DEPARTMENT_URL = 'http://localhost:5000/department'
-const SUB_DEPARTMENT_URL = 'http://localhost:5000/subdepartment'
-const DOCTOR_URL = 'http://localhost:5000/doctor'
-const LAB_URL = 'http://localhost:5000/lab'
-const TEST_URL = 'http://localhost:5000/test'
-const REPORT_URL = 'http://localhost:5000/testReport'
+const DEPARTMENT_URL = `${BASE_URL}/department`
+const SUB_DEPARTMENT_URL = `${BASE_URL}/subdepartment`
+const DOCTOR_URL = `${BASE_URL}/doctor`
+const LAB_URL = `${BASE_URL}/lab`
+const TEST_URL = `${BASE_URL}/test`
+const REPORT_URL = `${BASE_URL}/testReport`
 const REPORTS_PER_PAGE = 8
 
 const Report = () => {

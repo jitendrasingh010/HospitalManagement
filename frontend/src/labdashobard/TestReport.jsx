@@ -1,9 +1,10 @@
+import { BASE_URL } from '../config';
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
 import HospitalSidebar from '../hospitalDashboard/HospitalSidebar'
 
-const API_URL = 'http://localhost:5000/testReport'
+const API_URL = `${BASE_URL}/testReport`
 
 const emptyForm = {
   medicineId: '',

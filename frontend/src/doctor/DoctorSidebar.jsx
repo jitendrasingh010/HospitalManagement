@@ -1,6 +1,11 @@
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
+import DashboardIcon from '@mui/icons-material/Dashboard'
+import EventIcon from '@mui/icons-material/Event'
+import AssessmentIcon from '@mui/icons-material/Assessment'
+import DarkModeIcon from '@mui/icons-material/DarkMode'
+import LightModeIcon from '@mui/icons-material/LightMode'
 
 const DoctorSidebar = () => {
   const navigate = useNavigate()
@@ -11,9 +16,9 @@ const DoctorSidebar = () => {
   const email = user.email || 'doctor panel'
 
   const menuItems = [
-    { path: '/doctordashboard', icon: 'D', label: 'Dashboard' },
-    { path: '/doctorappointment', icon: 'A', label: 'Appointments' },
-    { path: '/doctorreport', icon: 'R', label: 'Reports' },
+    { path: '/doctordashboard', icon: <DashboardIcon />, label: 'Dashboard' },
+    { path: '/doctorappointment', icon: <EventIcon />, label: 'Appointments' },
+    { path: '/doctorreport', icon: <AssessmentIcon />, label: 'Reports' },
   ]
 
   return (
@@ -48,7 +53,7 @@ const DoctorSidebar = () => {
           </button>
         ))}
         <button onClick={toggleTheme}>
-          <span>{theme === 'light' ? 'D' : 'L'}</span>
+          <span>{theme === 'light' ? <DarkModeIcon /> : <LightModeIcon />}</span>
           {theme === 'light' ? 'Dark' : 'Light'}
         </button>
       </nav>

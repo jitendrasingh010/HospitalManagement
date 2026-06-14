@@ -657,6 +657,13 @@ textarea::placeholder {
   color: var(--muted);
 }
 
+.menu-icon .MuiSvgIcon-root,
+.hospital-menu span .MuiSvgIcon-root,
+.stat-icon .MuiSvgIcon-root,
+.hospital-card-icon .MuiSvgIcon-root {
+  color: inherit;
+}
+
 .MuiOutlinedInput-notchedOutline {
   border-color: var(--border) !important;
 }

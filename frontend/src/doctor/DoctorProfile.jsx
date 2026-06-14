@@ -1,8 +1,9 @@
+import { BASE_URL } from '../config';
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import DoctorSidebar from './DoctorSidebar'
 
-const API_URL = 'http://localhost:5000/doctor'
+const API_URL = `${BASE_URL}/doctor`
 
 const DoctorProfile = () => {
   const navigate = useNavigate()

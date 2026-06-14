@@ -1,8 +1,15 @@
+import { BASE_URL } from '../config';
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
+import DashboardIcon from '@mui/icons-material/Dashboard'
+import PersonIcon from '@mui/icons-material/Person'
+import ScienceIcon from '@mui/icons-material/Science'
+import AssessmentIcon from '@mui/icons-material/Assessment'
+import DarkModeIcon from '@mui/icons-material/DarkMode'
+import LightModeIcon from '@mui/icons-material/LightMode'
 
-const API_URL = 'http://localhost:5000/lab'
+const API_URL = `${BASE_URL}/lab`
 
 const Labdashboard = () => {
   const navigate = useNavigate()
@@ -42,23 +49,23 @@ const Labdashboard = () => {
 
         <nav className="hospital-menu">
           <button onClick={() => navigate('/labdashboard')}>
-            <span>L</span>
+            <span><DashboardIcon /></span>
             Dashboard
           </button>
           <button onClick={() => navigate('/labprofile')}>
-            <span>P</span>
+            <span><PersonIcon /></span>
             Profile
           </button>
           <button onClick={() => navigate('/test')}>
-            <span>T</span>
+            <span><ScienceIcon /></span>
             Tests
           </button>
           <button onClick={() => navigate('/testreport')}>
-            <span>R</span>
+            <span><AssessmentIcon /></span>
             Reports
           </button>
           <button onClick={toggleTheme}>
-            <span>{theme === 'light' ? 'D' : 'L'}</span>
+            <span>{theme === 'light' ? <DarkModeIcon /> : <LightModeIcon />}</span>
             {theme === 'light' ? 'Dark' : 'Light'}
           </button>
         </nav>
@@ -77,17 +84,17 @@ const Labdashboard = () => {
 
         <section className="hospital-dash-cards">
           <button className="hospital-dash-card" onClick={() => navigate('/labprofile')}>
-            <span className="hospital-card-icon">P</span>
+            <span className="hospital-card-icon"><PersonIcon fontSize="large" /></span>
             <b>Lab Profile</b>
             <small>View lab email, phone and location</small>
           </button>
           <button className="hospital-dash-card" onClick={() => navigate('/test')}>
-            <span className="hospital-card-icon">T</span>
+            <span className="hospital-card-icon"><ScienceIcon fontSize="large" /></span>
             <b>Tests</b>
             <small>Add, edit, show and delete tests</small>
           </button>
           <button className="hospital-dash-card" onClick={() => navigate('/testreport')}>
-            <span className="hospital-card-icon">R</span>
+            <span className="hospital-card-icon"><AssessmentIcon fontSize="large" /></span>
             <b>Reports</b>
             <small>Add and manage patient test reports</small>
           </button>

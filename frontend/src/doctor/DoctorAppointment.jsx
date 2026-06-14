@@ -1,3 +1,4 @@
+import { BASE_URL } from '../config';
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -15,10 +16,10 @@ import SearchIcon from '@mui/icons-material/Search'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import DoctorSidebar from './DoctorSidebar'
 
-const API_URL = 'http://localhost:5000/appointment'
-const MEDICINE_URL = 'http://localhost:5000/medicine'
-const TEST_URL = 'http://localhost:5000/test'
-const TEST_REPORT_URL = 'http://localhost:5000/testReport'
+const API_URL = `${BASE_URL}/appointment`
+const MEDICINE_URL = `${BASE_URL}/medicine`
+const TEST_URL = `${BASE_URL}/test`
+const TEST_REPORT_URL = `${BASE_URL}/testReport`
 const ITEMS_PER_PAGE = 6
 
 const emptyMedicineForm = {

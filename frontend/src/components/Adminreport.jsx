@@ -1,8 +1,9 @@
+import { BASE_URL } from '../config';
 import React, { useEffect, useState } from 'react'
 import { jsPDF } from 'jspdf'
 import AdminSidebar from './AdminSidebar'
 
-const API_URL = 'http://localhost:5000'
+const API_URL = `${BASE_URL}`
 
 const Adminreport = () => {
   const [states, setStates] = useState([])

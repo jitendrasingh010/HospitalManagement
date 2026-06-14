@@ -1,8 +1,15 @@
+import { BASE_URL } from '../config';
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import HospitalSidebar from './HospitalSidebar'
+import CategoryIcon from '@mui/icons-material/Category'
+import AccountTreeIcon from '@mui/icons-material/AccountTree'
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices'
+import BiotechIcon from '@mui/icons-material/Biotech'
+import ScienceIcon from '@mui/icons-material/Science'
+import AssessmentIcon from '@mui/icons-material/Assessment'
 
-const API_URL = 'http://localhost:5000/department'
+const API_URL = `${BASE_URL}/department`
 
 const HospitalDash = () => {
   const navigate = useNavigate()
@@ -72,32 +79,32 @@ const HospitalDash = () => {
 
         <section className="hospital-dash-cards">
           <button className="hospital-dash-card" onClick={() => navigate('/departments')}>
-            <span className="hospital-card-icon">+</span>
+            <span className="hospital-card-icon"><CategoryIcon fontSize="large" /></span>
             <b>Departments</b>
             <small>Add, edit, show and delete departments</small>
           </button>
           <button className="hospital-dash-card" onClick={() => navigate('/subdepartments')}>
-            <span className="hospital-card-icon">▦</span>
+            <span className="hospital-card-icon"><AccountTreeIcon fontSize="large" /></span>
             <b>Sub Departments</b>
             <small>Add, edit, show and delete sub departments</small>
           </button>
           <button className="hospital-dash-card" onClick={() => navigate('/doctors')}>
-            <span className="hospital-card-icon">Dr</span>
+            <span className="hospital-card-icon"><MedicalServicesIcon fontSize="large" /></span>
             <b>Doctors</b>
             <small>Add, edit, show and delete doctors</small>
           </button>
           <button className="hospital-dash-card" onClick={() => navigate('/addlab')}>
-            <span className="hospital-card-icon">L</span>
+            <span className="hospital-card-icon"><BiotechIcon fontSize="large" /></span>
             <b>Labs</b>
             <small>Add, edit, show and delete labs</small>
           </button>
           <button className="hospital-dash-card" onClick={() => navigate('/test')}>
-            <span className="hospital-card-icon">T</span>
+            <span className="hospital-card-icon"><ScienceIcon fontSize="large" /></span>
             <b>Tests</b>
             <small>Add, edit, show and delete lab tests</small>
           </button>
           <button className="hospital-dash-card" onClick={() => navigate('/reports')}>
-            <span className="hospital-card-icon">R</span>
+            <span className="hospital-card-icon"><AssessmentIcon fontSize="large" /></span>
             <b>Reports</b>
             <small>View hospital statistics and download reports</small>
           </button>

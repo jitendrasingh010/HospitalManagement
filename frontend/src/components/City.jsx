@@ -1,7 +1,8 @@
+import { BASE_URL } from '../config';
 import { useEffect, useState } from 'react'
 import AdminSidebar from './AdminSidebar'
 
-const API_URL = 'http://localhost:5000'
+const API_URL = `${BASE_URL}`
 
 const City = () => {
   const [cities, setCities] = useState([])

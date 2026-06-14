@@ -1,6 +1,14 @@
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
+import DashboardIcon from '@mui/icons-material/Dashboard'
+import MapIcon from '@mui/icons-material/Map'
+import LocationCityIcon from '@mui/icons-material/LocationCity'
+import DomainIcon from '@mui/icons-material/Domain'
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
+import AssessmentIcon from '@mui/icons-material/Assessment'
+import DarkModeIcon from '@mui/icons-material/DarkMode'
+import LightModeIcon from '@mui/icons-material/LightMode'
 
 const AdminSidebar = () => {
   const navigate = useNavigate()
@@ -11,12 +19,12 @@ const AdminSidebar = () => {
   const email = user.email || 'admin panel'
 
   const menuItems = [
-    { path: '/home', icon: 'D', label: 'Dashboard' },
-    { path: '/state', icon: 'S', label: 'State' },
-    { path: '/district', icon: 'D', label: 'District' },
-    { path: '/city', icon: 'C', label: 'City' },
-    { path: '/showhospitals', icon: 'H', label: 'Hospitals' },
-    { path: '/adminreport', icon: 'R', label: 'Reports' },
+    { path: '/home', icon: <DashboardIcon />, label: 'Dashboard' },
+    { path: '/state', icon: <MapIcon />, label: 'State' },
+    { path: '/district', icon: <LocationCityIcon />, label: 'District' },
+    { path: '/city', icon: <DomainIcon />, label: 'City' },
+    { path: '/showhospitals', icon: <LocalHospitalIcon />, label: 'Hospitals' },
+    { path: '/adminreport', icon: <AssessmentIcon />, label: 'Reports' },
   ]
 
   return (
@@ -51,7 +59,7 @@ const AdminSidebar = () => {
           </button>
         ))}
         <button onClick={toggleTheme}>
-          <span>{theme === 'light' ? 'D' : 'L'}</span>
+          <span>{theme === 'light' ? <DarkModeIcon /> : <LightModeIcon />}</span>
           {theme === 'light' ? 'Dark' : 'Light'}
         </button>
       </nav>

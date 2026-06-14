@@ -1,9 +1,13 @@
+import { BASE_URL } from '../config';
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import DoctorSidebar from './DoctorSidebar'
+import EventIcon from '@mui/icons-material/Event'
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices'
+import PaymentsIcon from '@mui/icons-material/Payments'
 
-const DOCTOR_URL = 'http://localhost:5000/doctor'
-const APPOINTMENT_URL = 'http://localhost:5000/appointment'
+const DOCTOR_URL = `${BASE_URL}/doctor`
+const APPOINTMENT_URL = `${BASE_URL}/appointment`
 
 const Doctordashboard = () => {
   const navigate = useNavigate()
@@ -71,19 +75,19 @@ const Doctordashboard = () => {
 
         <section className="hospital-dash-cards">
           <button className="hospital-dash-card" onClick={() => navigate('/doctorappointment')}>
-            <span className="hospital-card-icon">▦</span>
+            <span className="hospital-card-icon"><EventIcon fontSize="large" /></span>
             <b>{appointments.length}</b>
             <small>Total appointments booked with you</small>
           </button>
 
           <button className="hospital-dash-card" onClick={() => navigate('/doctorprofile')}>
-            <span className="hospital-card-icon">Dr</span>
+            <span className="hospital-card-icon"><MedicalServicesIcon fontSize="large" /></span>
             <b>{doctor.specialization || 'Specialization'}</b>
             <small>{doctor.qualification || 'View your doctor profile'}</small>
           </button>
 
           <button className="hospital-dash-card" onClick={() => navigate('/doctorappointment')}>
-            <span className="hospital-card-icon">Rs</span>
+            <span className="hospital-card-icon"><PaymentsIcon fontSize="large" /></span>
             <b>Rs. {doctor.fees || 0}</b>
             <small>Your consultation fees</small>
           </button>

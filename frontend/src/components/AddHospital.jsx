@@ -1,9 +1,10 @@
+import { BASE_URL } from '../config';
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../customhook/useTheme'
 
-const API_URL = 'http://localhost:5000/hospitalmanagement'
-const CITY_API_URL = 'http://localhost:5000/city/getcity'
+const API_URL = `${BASE_URL}/hospitalmanagement`
+const CITY_API_URL = `${BASE_URL}/city/getcity`
 
 const emptyForm = {
   name: '',

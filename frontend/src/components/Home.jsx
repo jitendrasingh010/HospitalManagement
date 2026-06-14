@@ -1,8 +1,13 @@
+import { BASE_URL } from '../config';
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AdminSidebar from './AdminSidebar'
+import MapIcon from '@mui/icons-material/Map'
+import LocationCityIcon from '@mui/icons-material/LocationCity'
+import DomainIcon from '@mui/icons-material/Domain'
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
 
-const API_URL = 'http://localhost:5000'
+const API_URL = `${BASE_URL}`
 
 const Home = () => {
   const usenavigate = useNavigate()
@@ -47,10 +52,10 @@ const Home = () => {
   }, [])
 
   const cards = [
-    { title: 'States', icon: '⌂', count: counts.states, path: '/state', text: 'Manage state master data' },
-    { title: 'Districts', icon: '▦', count: counts.districts, path: '/district', text: 'Manage district records' },
-    { title: 'Cities', icon: '⌾', count: counts.cities, path: '/city', text: 'Manage city records' },
-    { title: 'Hospitals', icon: '+', count: counts.hospitals, path: '/showhospitals', text: 'Manage hospital records' },
+    { title: 'States', icon: <MapIcon fontSize="large" />, count: counts.states, path: '/state', text: 'Manage state master data' },
+    { title: 'Districts', icon: <LocationCityIcon fontSize="large" />, count: counts.districts, path: '/district', text: 'Manage district records' },
+    { title: 'Cities', icon: <DomainIcon fontSize="large" />, count: counts.cities, path: '/city', text: 'Manage city records' },
+    { title: 'Hospitals', icon: <LocalHospitalIcon fontSize="large" />, count: counts.hospitals, path: '/showhospitals', text: 'Manage hospital records' },
   ]
 
   return (
