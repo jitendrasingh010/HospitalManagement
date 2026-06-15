@@ -282,7 +282,7 @@ const DetailHome = () => {
 
   return (
     <main className="public-page">
-      <header className="public-header">
+      <header className="public-header video-header">
         <button className="public-logo" onClick={() => navigate('/login')}>
           <span>H</span>
           <b>MediCare</b>
@@ -310,38 +310,112 @@ const DetailHome = () => {
         </div>
       </header>
 
-      <section className="public-hero">
-        <div className="public-hero-content">
-          <p className="eyebrow">Hospital Management</p>
-          <h1>Find trusted hospitals, doctors, and departments in one place.</h1>
-          <p>
-            Browse approved hospitals, check their facilities, and view available doctors with sub departments.
-          </p>
-          <div className="public-hero-actions">
-            <a className="primary-link" href="#hospitals">View Hospitals</a>
-            <button className="ghost-btn" onClick={() => navigate('/addhospital')}>Register Hospital</button>
-          </div>
-        </div>
+      <section className="public-hero video-hero">
+        <video
+          autoPlay={true}
+          loop={true}
+          muted={true}
+          playsInline={true}
+          className="hero-bg-video"
+          src="https://videos.pexels.com/video-files/5867889/5867889-hd_2048_1080_25fps.mp4"
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0, opacity: 1, display: 'block' }}
+        />
+        <div className="hero-overlay" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0, 0, 0, 0.6)', zIndex: 1 }}></div>
 
-        <div className="hero-info-panel">
-          <span>24/7</span>
-          <b>Emergency Support</b>
-          <small>Approved hospitals with ambulance, beds, specialist care and doctor details.</small>
+        <div className="hero-container">
+          <div className="public-hero-content">
+            <div className="brand-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', background: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(8px)', borderRadius: '20px', border: '1px solid rgba(255, 255, 255, 0.2)', color: '#fff', fontSize: '13px', fontWeight: '500', marginBottom: '20px', whiteSpace: 'nowrap', width: 'fit-content' }}>
+              <span className="brand-badge-dot" style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', display: 'inline-block', flexShrink: 0 }} />
+              24/7 Emergency Support & Care
+            </div>
+            <p className="eyebrow">Hospital Management</p>
+            <h1>Find trusted hospitals, doctors, and departments in one place.</h1>
+            <p>
+              Browse approved hospitals, check their facilities, and view available doctors with sub departments.
+            </p>
+            <div className="public-hero-actions">
+              <a className="primary-link" href="#hospitals">View Hospitals</a>
+              <button className="ghost-btn" onClick={() => navigate('/addhospital')}>Register Hospital</button>
+            </div>
+          </div>
         </div>
       </section>
 
       <section className="public-stats" id="services">
         <div>
-          <strong>{hospitals.length}</strong>
+          <strong>{hospitals.length || '120+'}</strong>
           <span>Approved Hospitals</span>
         </div>
         <div>
-          <strong>{allDoctors.length}</strong>
-          <span>Available Doctors</span>
+          <strong>{allDoctors.length || '450+'}</strong>
+          <span>Expert Doctors</span>
         </div>
         <div>
-          <strong>{emergencyHospitalCount}</strong>
-          <span>Emergency Hospitals</span>
+          <strong>{emergencyHospitalCount || '24'}</strong>
+          <span>Emergency Centers</span>
+        </div>
+        <div>
+          <strong>30+</strong>
+          <span>Specialized Labs</span>
+        </div>
+      </section>
+
+      <section className="public-section bg-soft" id="specialities">
+        <div className="section-title text-center">
+          <div>
+            <p className="eyebrow">Top Specialties</p>
+            <h2>Find doctors by health concern</h2>
+          </div>
+        </div>
+        <div className="department-grid">
+          {[
+            { name: 'Cardiology', icon: '❤️' },
+            { name: 'Neurology', icon: '🧠' },
+            { name: 'Orthopedics', icon: '🦴' },
+            { name: 'Pediatrics', icon: '👶' },
+            { name: 'Dentistry', icon: '🦷' },
+            { name: 'Eye Care', icon: '👁️' },
+            { name: 'Dermatology', icon: '✨' },
+            { name: 'General Medicine', icon: '🩺' }
+          ].map((dept) => (
+            <div className="department-card" key={dept.name}>
+              <span className="dept-icon">{dept.icon}</span>
+              <h3>{dept.name}</h3>
+              <p>Specialist Doctors</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="public-hero lab-promo" style={{ width: '100%', maxWidth: '100%', display: 'block', overflow: 'hidden', margin: '0 0 60px 0', padding: '80px 0' }}>
+        <div className="hero-container">
+          <div className="public-hero-content">
+            <p className="eyebrow">Integrated Diagnostics</p>
+            <h2>Book Lab Tests & Access Reports Online</h2>
+            <p>
+              Get tested at our certified partner labs. Book blood tests, MRI, X-Ray, and view your detailed medical reports directly from your secure dashboard.
+            </p>
+            <div className="public-hero-actions mt-3">
+              <button className="view-btn" onClick={() => navigate('/login')}>Explore Labs</button>
+            </div>
+          </div>
+          <div className="lab-promo-cards">
+            <div className="promo-card">
+              <span className="promo-badge">Fast</span>
+              <b>Blood Test (CBC)</b>
+              <small>Reports in 24 hrs</small>
+            </div>
+            <div className="promo-card">
+              <span className="promo-badge">Advanced</span>
+              <b>MRI Scan</b>
+              <small>High resolution imaging</small>
+            </div>
+            <div className="promo-card">
+              <span className="promo-badge">Routine</span>
+              <b>X-Ray & Ultrasound</b>
+              <small>Instant digital access</small>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -402,46 +476,46 @@ const DetailHome = () => {
 
         {showHospitalResults && filteredHospitals.length > 0 && (
           <div className="public-hospital-grid">
-          {filteredHospitals.map((hospital) => {
-            const rating = getRatingText(hospital.rating)
+            {filteredHospitals.map((hospital) => {
+              const rating = getRatingText(hospital.rating)
 
-            return (
-            <article className="public-hospital-card" key={hospital._id}>
-              {getHospitalImage(hospital) ? (
-                <img src={getHospitalImage(hospital)} alt={hospital.name} />
-              ) : (
-                <div className="hospital-image-placeholder">{hospital.name?.charAt(0) || 'H'}</div>
-              )}
+              return (
+                <article className="public-hospital-card" key={hospital._id}>
+                  {getHospitalImage(hospital) ? (
+                    <img src={getHospitalImage(hospital)} alt={hospital.name} />
+                  ) : (
+                    <div className="hospital-image-placeholder">{hospital.name?.charAt(0) || 'H'}</div>
+                  )}
 
-              <div className="public-card-body">
-                <div className="hospital-card-title">
-                  <span className="status-pill">Approved</span>
-                  <span className="rating-pill">
-                    <span>{rating.stars}</span>
-                    <b>{rating.value}</b>
-                  </span>
-                </div>
-                <h3>{hospital.name}</h3>
-                <p>{getAddressText(hospital.address)}</p>
+                  <div className="public-card-body">
+                    <div className="hospital-card-title">
+                      <span className="status-pill">Approved</span>
+                      <span className="rating-pill">
+                        <span>{rating.stars}</span>
+                        <b>{rating.value}</b>
+                      </span>
+                    </div>
+                    <h3>{hospital.name}</h3>
+                    <p>{getAddressText(hospital.address)}</p>
 
-                <div className="public-info-row">
-                  <span><b>{hospital.numberOfBeds || 0}</b>Beds</span>
-                  <span><b>{hospital.numberOfDoctors || 0}</b>Doctors</span>
-                  <span><b>{hospital.speciality || 'General'}</b>Speciality</span>
-                </div>
+                    <div className="public-info-row">
+                      <span><b>{hospital.numberOfBeds || 0}</b>Beds</span>
+                      <span><b>{hospital.numberOfDoctors || 0}</b>Doctors</span>
+                      <span><b>{hospital.speciality || 'General'}</b>Speciality</span>
+                    </div>
 
-                <div className="service-row">
-                  <span>{hospital.emergencyAvailable ? 'Emergency' : 'General Care'}</span>
-                  <span>{hospital.ambulanceService ? 'Ambulance' : 'OPD'}</span>
-                </div>
+                    <div className="service-row">
+                      <span>{hospital.emergencyAvailable ? 'Emergency' : 'General Care'}</span>
+                      <span>{hospital.ambulanceService ? 'Ambulance' : 'OPD'}</span>
+                    </div>
 
-                <button className="view-btn hospital-view-btn" onClick={() => openHospital(hospital)}>
-                  View Hospital
-                </button>
-              </div>
-            </article>
-            )
-          })}
+                    <button className="view-btn hospital-view-btn" onClick={() => openHospital(hospital)}>
+                      View Hospital
+                    </button>
+                  </div>
+                </article>
+              )
+            })}
           </div>
         )}
 
@@ -504,20 +578,48 @@ const DetailHome = () => {
         )}
       </section>
 
-      <footer className="public-footer" id="contact">
+      <footer className="public-footer" id="contact" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px', padding: '60px 20px 40px 20px', borderTop: '1px solid var(--border)', marginTop: '60px' }}>
         <div>
-          <h2>MediCare</h2>
-          <p>Professional hospital discovery and management platform.</p>
+          <h2 style={{ fontSize: '24px', fontWeight: '800', margin: '0 0 12px 0', background: 'linear-gradient(135deg, var(--primary), var(--blue))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'inline-block' }}>MediCare</h2>
+          <p style={{ fontSize: '14px', lineHeight: '1.6', margin: '0 0 20px 0', color: 'var(--muted)' }}>
+            Professional healthcare management platform helping you find trusted hospitals, expert doctors, and book online services seamlessly.
+          </p>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <span style={{ fontSize: '18px', cursor: 'pointer' }}>🌐</span>
+            <span style={{ fontSize: '18px', cursor: 'pointer' }}>📘</span>
+            <span style={{ fontSize: '18px', cursor: 'pointer' }}>🐦</span>
+            <span style={{ fontSize: '18px', cursor: 'pointer' }}>💼</span>
+          </div>
         </div>
+
         <div>
-          <b>Contact</b>
-          <span>support@medicare.com</span>
-          <span>+91 98765 43210</span>
+          <b style={{ fontSize: '16px', display: 'block', marginBottom: '16px', color: 'var(--text)' }}>Our Services</b>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <span style={{ fontSize: '14px', color: 'var(--muted)', cursor: 'pointer' }}>Hospital Directory</span>
+            <span style={{ fontSize: '14px', color: 'var(--muted)', cursor: 'pointer' }}>Specialist Doctors</span>
+            <span style={{ fontSize: '14px', color: 'var(--muted)', cursor: 'pointer' }}>Online Lab Booking</span>
+            <span style={{ fontSize: '14px', color: 'var(--muted)', cursor: 'pointer' }}>24/7 Ambulance Support</span>
+          </div>
         </div>
+
         <div>
-          <b>Quick Links</b>
-          {!isLoggedIn && <button onClick={() => navigate('/login')}>Login</button>}
-          <button onClick={() => navigate('/addhospital')}>Register Hospital</button>
+          <b style={{ fontSize: '16px', display: 'block', marginBottom: '16px', color: 'var(--text)' }}>Contact Info</b>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: 'var(--muted)' }}>
+            <span>📍 123 Health Ave, Medical Zone, New Delhi</span>
+            <span>📞 Helpline: +91 98765 43210</span>
+            <span>✉️ Email: support@medicare.com</span>
+            <span>⏰ Hours: 24/7 Emergency Support</span>
+          </div>
+        </div>
+
+        <div>
+          <b style={{ fontSize: '16px', display: 'block', marginBottom: '16px', color: 'var(--text)' }}>Quick Links</b>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-start' }}>
+            {!isLoggedIn && <button onClick={() => navigate('/login')} style={{ fontSize: '14px', background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', padding: 0, fontWeight: '700' }}>Login to Dashboard</button>}
+            <button onClick={() => navigate('/addhospital')} style={{ fontSize: '14px', background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', padding: 0, fontWeight: '700' }}>Register Hospital</button>
+            <span style={{ fontSize: '14px', color: 'var(--muted)', cursor: 'pointer' }}>Privacy Policy</span>
+            <span style={{ fontSize: '14px', color: 'var(--muted)', cursor: 'pointer' }}>Terms of Service</span>
+          </div>
         </div>
       </footer>
 

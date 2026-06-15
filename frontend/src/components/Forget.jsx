@@ -118,9 +118,11 @@ const Forget = () => {
   return (
     <main className="login-page">
       <section className="login-box forget-box">
-        <button onClick={() => navigate("/")} className="back-btn" type="button">
-          Back
-        </button>
+        <div className="theme-row">
+          <button onClick={() => navigate("/")} className="back-btn" type="button">
+            Back to login
+          </button>
+        </div>
 
         <div className="login-head">
           <div className="login-logo">H</div>
@@ -137,49 +139,58 @@ const Forget = () => {
         </div>
 
         {step === 1 && (
-          <form onSubmit={sendOTP} className="login-form">
-            <input
-              type="email"
-              placeholder="Enter email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+          <form onSubmit={sendOTP} className="login-form mt-3">
+            <label className="login-field full-width">
+              <span>Email Address</span>
+              <input
+                type="email"
+                placeholder="Enter registered email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </label>
 
-            <button type="submit" disabled={loading}>
-              {loading ? "Sending..." : "Send OTP"}
+            <button type="submit" disabled={loading} className="full-width mt-3">
+              {loading ? "Sending OTP..." : "Send OTP"}
             </button>
           </form>
         )}
 
         {step === 2 && (
-          <form onSubmit={verifyOTP} className="login-form">
-            <input
-              type="text"
-              maxLength="6"
-              placeholder="Enter OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-              required
-            />
+          <form onSubmit={verifyOTP} className="login-form mt-3">
+            <label className="login-field full-width">
+              <span>Verification OTP</span>
+              <input
+                type="text"
+                maxLength="6"
+                placeholder="Enter 6-digit OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                required
+              />
+            </label>
 
-            <button type="submit" disabled={loading}>
+            <button type="submit" disabled={loading} className="full-width mt-3">
               {loading ? "Verifying..." : "Verify OTP"}
             </button>
           </form>
         )}
 
         {step === 3 && (
-          <form onSubmit={resetPassword} className="login-form">
-            <input
-              type="password"
-              placeholder="New Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+          <form onSubmit={resetPassword} className="login-form mt-3">
+            <label className="login-field full-width">
+              <span>New Password</span>
+              <input
+                type="password"
+                placeholder="Enter new password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </label>
 
-            <button type="submit" disabled={loading}>
+            <button type="submit" disabled={loading} className="full-width mt-3">
               {loading ? "Updating..." : "Reset Password"}
             </button>
           </form>

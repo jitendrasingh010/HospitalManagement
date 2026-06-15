@@ -1313,11 +1313,24 @@ tbody tr:hover {
 
 .login-brand-panel {
   min-height: 560px;
-  padding: 38px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--primary-dark), var(--blue));
+  padding: 48px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary) 60%, var(--blue));
   color: #ffffff;
   box-shadow: 0 24px 70px var(--shadow-strong);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-brand-panel::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 70%;
+  height: 70%;
+  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+  pointer-events: none;
 }
 
 .login-brand-panel .eyebrow,
@@ -1359,7 +1372,11 @@ tbody tr:hover {
 
 .login-box {
   width: 100%;
-  padding: 28px;
+  padding: 40px;
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px var(--shadow);
+  border: 1px solid var(--border-soft);
 }
 
 .signup-box,
@@ -1367,6 +1384,11 @@ tbody tr:hover {
   width: min(760px, 100%);
   margin: 0 auto;
   grid-column: 1 / -1;
+  padding: 40px;
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px var(--shadow);
+  border: 1px solid var(--border-soft);
 }
 
 .login-head {
@@ -1380,17 +1402,45 @@ tbody tr:hover {
   width: 64px;
   height: 64px;
   flex: 0 0 auto;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 30px;
   font-weight: 900;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--primary), var(--blue));
+  color: #ffffff;
+  box-shadow: 0 8px 20px var(--shadow);
 }
 
 .login-field {
   display: grid;
   gap: 7px;
   color: var(--muted);
-  font-size: 13px;
-  font-weight: 900;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.mt-3 {
+  margin-top: 12px;
+}
+
+.login-field input,
+.login-form input,
+.login-form select {
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: normal;
+  padding: 12px 16px;
 }
 
 .forgot-btn,
@@ -3514,7 +3564,18 @@ body.dark .rating-pill span {
 
 .login-links {
   justify-content: space-between;
-  margin-top: 14px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-soft);
+  width: 100%;
+}
+
+.login-box .theme-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 24px;
 }
 
 .forgot-btn,
@@ -3824,6 +3885,188 @@ body.dark .rating-pill span {
   line-height: 1.55;
 }
 
+/* Landing Page Additions */
+.public-header.video-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  background: transparent !important;
+  border-bottom: none !important;
+}
+
+.public-header.video-header .public-logo,
+.public-header.video-header .public-logo b,
+.public-header.video-header .public-nav a,
+.public-header.video-header .theme-btn {
+  color: #fff !important;
+}
+
+.public-hero.video-hero {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 60px 0;
+  padding: 140px 0 80px 0;
+  display: block;
+  overflow: hidden;
+}
+
+.hero-bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.hero-container {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: min(1180px, calc(100% - 36px));
+  margin: 0 auto;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 26px;
+  align-items: center;
+}
+
+.public-hero.video-hero .hero-container {
+  grid-template-columns: 1fr;
+}
+
+.public-hero.video-hero .public-hero-content h1,
+.public-hero.video-hero .public-hero-content p,
+.public-hero.video-hero .public-hero-content .eyebrow {
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.public-hero.video-hero .public-hero-actions {
+  gap: 24px;
+}
+
+.public-hero.video-hero .ghost-btn {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
+
+.public-hero.video-hero .ghost-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #fff;
+}
+
+.text-center {
+  text-align: center;
+}
+.text-center .eyebrow {
+  justify-content: center;
+}
+
+.department-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.department-card {
+  padding: 32px 24px;
+  background: var(--card);
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.department-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 40px var(--shadow);
+  border-color: var(--primary);
+}
+
+.dept-icon {
+  font-size: 42px;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.department-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: var(--text);
+}
+
+.department-card p {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0;
+}
+
+.lab-promo {
+  background: linear-gradient(135deg, var(--card-soft), var(--bg));
+  border-top: 1px solid var(--border-soft);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.lab-promo-cards {
+  display: grid;
+  gap: 16px;
+}
+
+.promo-card {
+  padding: 24px;
+  background: var(--card);
+  border-radius: 16px;
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 8px 24px var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  transition: transform 0.3s;
+}
+
+.promo-card:hover {
+  transform: translateX(-10px);
+}
+
+.promo-badge {
+  padding: 4px 10px;
+  background: rgba(15, 118, 110, 0.1);
+  color: var(--primary);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.promo-card b {
+  font-size: 18px;
+  color: var(--text);
+  margin: 0;
+}
+
+.promo-card small {
+  color: var(--muted);
+  font-size: 14px;
+}
+
 @media (max-width: 560px) {
   .doctor-card-head {
     grid-template-columns: 60px minmax(0, 1fr);
@@ -3838,4 +4081,89 @@ body.dark .rating-pill span {
   .doctor-card-actions {
     grid-template-columns: 1fr;
   }
+}
+
+/* Responsiveness for landing page video hero and diagnostic sections */
+@media (max-width: 992px) {
+  .public-hero {
+    grid-template-columns: 1fr !important;
+    padding: 80px 20px 40px 20px !important;
+    gap: 40px !important;
+    min-height: auto !important;
+  }
+  .public-hero-content {
+    max-width: 100% !important;
+    text-align: center !important;
+  }
+  .public-hero-content p:not(.eyebrow) {
+    margin: 0 auto 24px auto !important;
+  }
+  .public-hero-actions {
+    justify-content: center !important;
+  }
+  .lab-promo-cards {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+    width: 100% !important;
+    margin-top: 20px !important;
+  }
+}
+
+/* Dashboard Chart Animations */
+@keyframes chartGrowBar {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.chart-animated-bar {
+  transform-origin: bottom;
+  animation: chartGrowBar 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes chartDrawLine {
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.chart-animated-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: chartDrawLine 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes chartFadeArea {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.chart-animated-area {
+  animation: chartFadeArea 1.5s ease-out forwards;
+}
+
+@keyframes chartPopDot {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.chart-animated-dot {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: chartPopDot 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }

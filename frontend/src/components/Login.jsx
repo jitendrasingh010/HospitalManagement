@@ -92,7 +92,7 @@ const Login = () => {
         </div>
 
         <form className="login-form" onSubmit={handleLogin}>
-          <label className="login-field">
+          <label className="login-field full-width">
             <span>Email Address</span>
             <input
               type="email"
@@ -102,7 +102,7 @@ const Login = () => {
             />
           </label>
 
-          <label className="login-field">
+          <label className="login-field full-width">
             <span>Password</span>
             <input
               type="password"
@@ -112,7 +112,7 @@ const Login = () => {
             />
           </label>
 
-          <button type="submit">Login Now</button>
+          <button type="submit" className="full-width mt-3">Login Now</button>
         </form>
 
         <div className="login-links">

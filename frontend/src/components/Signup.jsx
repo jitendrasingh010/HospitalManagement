@@ -82,32 +82,58 @@ const Signup = () => {
         </div>
 
         <form className="login-form signup-form" onSubmit={handleSubmit}>
-          <input name="name" placeholder="Full name" value={form.name} onChange={handleChange} />
-          <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange} />
-          <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} />
-          <input name="phone" type="number" placeholder="Phone number" value={form.phone} onChange={handleChange} />
-          <input name="age" type="number" placeholder="Age" value={form.age} onChange={handleChange} />
+          <label className="login-field full-width">
+            <span>Full Name</span>
+            <input name="name" placeholder="Enter full name" value={form.name} onChange={handleChange} />
+          </label>
+          <label className="login-field full-width">
+            <span>Email Address</span>
+            <input name="email" type="email" placeholder="Enter email address" value={form.email} onChange={handleChange} />
+          </label>
+          <label className="login-field full-width">
+            <span>Password</span>
+            <input name="password" type="password" placeholder="Enter secure password" value={form.password} onChange={handleChange} />
+          </label>
+          
+          <div className="form-row">
+            <label className="login-field">
+              <span>Phone Number</span>
+              <input name="phone" type="number" placeholder="Enter phone" value={form.phone} onChange={handleChange} />
+            </label>
+            <label className="login-field">
+              <span>Age</span>
+              <input name="age" type="number" placeholder="Enter age" value={form.age} onChange={handleChange} />
+            </label>
+          </div>
 
-          <select name="gender" value={form.gender} onChange={handleChange}>
-            <option value="">Select gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
-
-          <select name="BG" value={form.BG} onChange={handleChange}>
-            <option value="">Select blood group</option>
-            <option value="A+">A+</option>
-            <option value="A-">A-</option>
-            <option value="B+">B+</option>
-            <option value="B-">B-</option>
-            <option value="O+">O+</option>
-            <option value="O-">O-</option>
-            <option value="AB+">AB+</option>
-            <option value="AB-">AB-</option>
-          </select>
-          <button type="submit" disabled={loading}>
-            {loading ? 'Creating...' : 'Signup'}
+          <div className="form-row">
+            <label className="login-field">
+              <span>Gender</span>
+              <select name="gender" value={form.gender} onChange={handleChange}>
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label className="login-field">
+              <span>Blood Group</span>
+              <select name="BG" value={form.BG} onChange={handleChange}>
+                <option value="">Select type</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+              </select>
+            </label>
+          </div>
+          
+          <button type="submit" disabled={loading} className="full-width mt-3">
+            {loading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
 
