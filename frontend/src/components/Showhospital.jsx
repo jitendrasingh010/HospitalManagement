@@ -2,6 +2,13 @@ import { BASE_URL } from '../config';
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AdminSidebar from './AdminSidebar'
+import HotelIcon from '@mui/icons-material/Hotel'
+import PeopleIcon from '@mui/icons-material/People'
+import StarIcon from '@mui/icons-material/Star'
+import EmailIcon from '@mui/icons-material/Email'
+import PhoneIcon from '@mui/icons-material/Phone'
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
+import LocationOnIcon from '@mui/icons-material/LocationOn'
 
 const API_URL = `${BASE_URL}/hospitalmanagement`
 
@@ -223,47 +230,82 @@ const Showhospital = () => {
               </div>
             )}
 
-            <div className="hospital-card-top">
-              <div>
-                <span className="status-pill">{item.status || 'pending'}</span>
+            <div className="hospital-card-body">
+              <div className="hospital-card-header">
+                <span className={`status-pill ${(item.status || 'pending').toLowerCase()}`}>
+                  {item.status || 'pending'}
+                </span>
                 <h2>{item.name}</h2>
+                {item.speciality && (
+                  <div className="hospital-speciality-badge">
+                    <LocalHospitalIcon fontSize="inherit" />
+                    <span>{item.speciality}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="hospital-location">
+                <LocationOnIcon fontSize="inherit" />
+                <span>{getAddressText(item.address)}</span>
+              </div>
+
+              <div className="hospital-stats-row">
+                <div className="stat-item">
+                  <HotelIcon className="stat-icon-beds" fontSize="inherit" />
+                  <span className="stat-value">{item.numberOfBeds || 0}</span>
+                  <span className="stat-label">Beds</span>
+                </div>
+                <div className="stat-item">
+                  <PeopleIcon className="stat-icon-docs" fontSize="inherit" />
+                  <span className="stat-value">{item.numberOfDoctors || 0}</span>
+                  <span className="stat-label">Doctors</span>
+                </div>
+                <div className="stat-item">
+                  <StarIcon className="stat-icon-rating" fontSize="inherit" />
+                  <span className="stat-value">{item.rating || 'N/A'}</span>
+                  <span className="stat-label">Rating</span>
+                </div>
+              </div>
+
+              <div className="hospital-contact-list">
+                <div className="contact-item">
+                  <EmailIcon fontSize="inherit" />
+                  <span title={item.email}>{item.email || '-'}</span>
+                </div>
+                <div className="contact-item">
+                  <PhoneIcon fontSize="inherit" />
+                  <span>{item.contact || '-'}</span>
+                </div>
+              </div>
+
+              <div className="hospital-facilities">
+                <span className={`facility-pill ${item.emergencyAvailable ? 'available' : 'unavailable'}`}>
+                  Emergency: {item.emergencyAvailable ? 'Yes' : 'No'}
+                </span>
+                <span className={`facility-pill ${item.ambulanceService ? 'available' : 'unavailable'}`}>
+                  Ambulance: {item.ambulanceService ? 'Yes' : 'No'}
+                </span>
+              </div>
+
+              {item.description && (
+                <p className="hospital-description-text" title={item.description}>
+                  {item.description}
+                </p>
+              )}
+
+              <div className="hospital-card-actions">
+                {item.status !== 'approved' && (
+                  <button className="approve-action-btn" onClick={() => handleApprove(item._id)}>
+                    Approve
+                  </button>
+                )}
+                {item.status !== 'rejected' && (
+                  <button className="reject-action-btn" onClick={() => handleReject(item._id)}>
+                    Reject
+                  </button>
+                )}
               </div>
             </div>
-
-            <p className="muted">{getAddressText(item.address)}</p>
-
-            <div className="hospital-info-grid">
-              <span><b>Speciality</b>{item.speciality}</span>
-              <span><b>Email</b>{item.email}</span>
-              <span><b>Contact</b>{item.contact}</span>
-              <span><b>City</b>{item.address?.city || '-'}</span>
-              <span><b>District</b>{item.address?.district?.district || '-'}</span>
-              <span><b>State</b>{item.address?.state?.state || '-'}</span>
-              <span><b>Pincode</b>{item.pincode}</span>
-              <span><b>Doctors</b>{item.numberOfDoctors || 0}</span>
-              <span><b>Beds</b>{item.numberOfBeds || 0}</span>
-              <span><b>Rating</b>{item.rating || 'N/A'}</span>
-            </div>
-
-            <div className="service-row">
-              <span>{item.emergencyAvailable ? 'Emergency Available' : 'No Emergency'}</span>
-              <span>{item.ambulanceService ? 'Ambulance Available' : 'No Ambulance'}</span>
-            </div>
-
-            <div className="form-actions approve-btn">
-              {item.status !== 'approved' && (
-                <button className="secondary-btn" onClick={() => handleApprove(item._id)}>
-                  Approve
-                </button>
-              )}
-              {item.status !== 'rejected' && (
-                <button className="danger-btn" onClick={() => handleReject(item._id)}>
-                  Reject
-                </button>
-              )}
-            </div>
-
-            {item.description && <p className="hospital-desc">{item.description}</p>}
           </article>
         ))}
         </div>
